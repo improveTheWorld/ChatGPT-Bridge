@@ -1,4 +1,5 @@
 {
   "pollingFrequency": 1000,
-  "messageCompletionTime": 3000
+  "messageCompletionTime": 3000,
+  "streamingMode": true
 }

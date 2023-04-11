@@ -26,9 +26,19 @@ function checkForNewCommands() {
 
   // Continue reading the most recent received message until it doesn't change during the defined time
   if (newMessage !== previousMessage) {
+    if (config.streamingMode) {
+
+      let appendedMessage;
+      if (previousMessage === '') {
+        appendedMessage = newMessage;
+      } else {
+        appendedMessage = newMessage.slice(previousMessage.length).trim();
+      }
+      console.log(appendedMessage);
+    }
     previousMessage = newMessage;
     previousMessageTimestamp = Date.now();
-  } else if (Date.now() - previousMessageTimestamp >= config.messageCompletionTime) {
+  } else if (Date.now() - previousMessageTimestamp >= config.messageCompletionTime && !config.streamingMode) {
     if (newMessage !== lastCommand) {
       lastCommand = newMessage;
       console.log('Most recent received message:', lastCommand);
@@ -36,6 +46,7 @@ function checkForNewCommands() {
     }
   }
 }
+
 
 function sendFeedBack(message) {
   const textarea = document.querySelector('textarea[placeholder="Send a message..."]');
