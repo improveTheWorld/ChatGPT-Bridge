@@ -3,15 +3,28 @@ let previousMessage = '';
 let previousMessageTimestamp = 0;
 let monitoringChat = false;
 let intervalId = null;
+let config = null;
+
+// Load config.json
+fetch(chrome.runtime.getURL('config.json'))
+  .then((response) => response.json())
+  .then((loadedConfig) => {
+    config = loadedConfig;
+  })
+  .catch((error) => {
+    console.error('Error loading config:', error);
+  });
 
 function checkForNewCommands() {
+  if (!config) return;
+
   const newMessage = document.querySelector('div.group:nth-last-child(2) div.markdown.prose').innerText.trim();
 
-  // Continue reading the most recent received message until it doesn't change during 4 seconds
+  // Continue reading the most recent received message until it doesn't change during the defined time
   if (newMessage !== previousMessage) {
     previousMessage = newMessage;
     previousMessageTimestamp = Date.now();
-  } else if (Date.now() - previousMessageTimestamp >= 3000) {
+  } else if (Date.now() - previousMessageTimestamp >= config.messageCompleteTime) {
     if (newMessage !== lastCommand) {
       lastCommand = newMessage;
       console.log('Most recent received message:', lastCommand);
@@ -44,7 +57,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.start) {
     if (!monitoringChat) {
       monitoringChat = true;
-      intervalId = setInterval(checkForNewCommands, 1000);
+      intervalId = setInterval(checkForNewCommands, config.pollingFrequency);
       sendResponse({ message: 'Started monitoring chat' });
     } else {
       sendResponse({ message: 'Already monitoring chat' });
