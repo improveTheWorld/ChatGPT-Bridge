@@ -24,7 +24,7 @@ function checkForNewCommands() {
   if (newMessage !== previousMessage) {
     previousMessage = newMessage;
     previousMessageTimestamp = Date.now();
-  } else if (Date.now() - previousMessageTimestamp >= config.messageCompleteTime) {
+  } else if (Date.now() - previousMessageTimestamp >= config.messageCompletionTime) {
     if (newMessage !== lastCommand) {
       lastCommand = newMessage;
       console.log('Most recent received message:', lastCommand);

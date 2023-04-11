@@ -21,5 +21,11 @@
   "host_permissions": ["<all_urls>"],
   "icons": {
     "48": "icon48.png"
-  }
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["config.json"],
+      "matches": ["<all_urls>"]
+    }
+  ]
 }

@@ -1,4 +1,4 @@
 {
   "pollingFrequency": 1000,
-  "messageCompleteTime": 3000
+  "messageCompletionTime": 3000
 }
