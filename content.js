@@ -44,9 +44,20 @@ function checkForNewCommands() {
   }
 }
 
+function clickSendButton(sendButton)
+{
+ 
+  // Check if the send button is active and click it
+  if (!sendButton.hasAttribute('disabled')) {
+    sendButton.click();
+  } else {
+    console.log("Send button is not active.");
+  }
+}
+
 function sendFeedBack(message) {
   const textarea = document.querySelector('textarea[placeholder="Send a message..."]');
-  const sendButton = document.querySelector('textarea[placeholder="Send a message..."]').parentElement.parentElement.querySelector('button');
+   const sendButton = document.querySelector('textarea[placeholder="Send a message..."]').parentElement.parentElement.querySelector('button');
 
   if (!textarea || !sendButton) {
     console.error('Unable to find textarea or send button.');
@@ -58,13 +69,13 @@ function sendFeedBack(message) {
   // Trigger the input event to let the website know the textarea value has changed
   const inputEvent = new Event('input', { bubbles: true });
   textarea.dispatchEvent(inputEvent);
+  
+ // Delay the clickSendButton by 1 second
+    setTimeout(() => {
+      clickSendButton(sendButton);
+    }, 1000);
 
-  // Check if the send button is active and click it
-  if (!sendButton.hasAttribute('disabled')) {
-    sendButton.click();
-  } else {
-    console.log("Send button is not active.");
-  }
+  
 }
 
 function sendMessageToWebSocketServer(message) {
