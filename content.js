@@ -18,7 +18,11 @@ fetch(chrome.runtime.getURL('config.json'))
 function checkForNewCommands() {
   if (!config) return;
 
-  const newMessage = document.querySelector('div.group:nth-last-child(2) div.markdown.prose').innerText.trim();
+  const messageElement = document.querySelector('div.group:nth-last-child(2) div.markdown.prose');
+  
+  if (!messageElement) return;
+
+  const newMessage = messageElement.innerText.trim();
 
   // Continue reading the most recent received message until it doesn't change during the defined time
   if (newMessage !== previousMessage) {
@@ -37,6 +41,11 @@ function sendFeedBack(message) {
   const textarea = document.querySelector('textarea[placeholder="Send a message..."]');
   const sendButton = document.querySelector('textarea[placeholder="Send a message..."]').parentElement.parentElement.querySelector('button');
 
+  if (!textarea || !sendButton) {
+    console.error('Unable to find textarea or send button.');
+    return;
+  }
+
   textarea.value = message;
 
   // Trigger the input event to let the website know the textarea value has changed
@@ -50,8 +59,6 @@ function sendFeedBack(message) {
     console.log("Send button is not active.");
   }
 }
-
-
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.start) {
