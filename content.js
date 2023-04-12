@@ -46,8 +46,7 @@ function checkForNewCommands() {
 
 function clickSendButton(sendButton)
 {
- 
-  // Check if the send button is active and click it
+  // Check if the send button is active and simulate a click
   if (!sendButton.hasAttribute('disabled')) {
     sendButton.click();
   } else {
@@ -73,7 +72,7 @@ function sendFeedBack(message) {
  // Delay the clickSendButton by 1 second
     setTimeout(() => {
       clickSendButton(sendButton);
-    }, 1000);
+    }, config.feedbackDelay);
 
   
 }

@@ -1,5 +1,6 @@
 {
   "pollingFrequency": 1000,
   "messageCompletionTime": 3000,
-  "streamingMode": false
+  "streamingMode": false,
+  "feedbackDelay":100
 }
