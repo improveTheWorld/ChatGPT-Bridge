@@ -1,6 +1,6 @@
 # ChatGPT-Bridge
 
-![ChatGPT-Bridge Logo](./assets/logo.png)
+![ChatGPT-Bridge Logo](./icon48.png)
 
 
 #### Tired of waiting for access to GPT-4 API?!! Here’s the solution! 
@@ -43,7 +43,7 @@ This plugin is part of an upcoming project, which gives ChatGPT access to the Wi
 
 ## 🛠️ Usage
 
-1. After installing the plugin, click the plugin button on the top part of the browser to open a popup with two buttons: "Start" to initiate bridging with the third-party software, and "Stop" to end the connection.
+1. After installing the plugin, go to [ChatGPT](https://chat.openai.com/chat) website, click the plugin button on the top part of the browser to open a popup with two buttons: "Start" to initiate bridging with the third-party software, and "Stop" to end the connection.
 
 2. The default WebSocket communication is done over port 8181. You can change the port in the config.json file if necessary.
 
