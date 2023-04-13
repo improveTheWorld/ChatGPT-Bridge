@@ -4,7 +4,7 @@ This software is licensed under two separate licenses: a permissive open-source 
 
 ## For Free Software Projects
 
-If you are using this software in a free software project, you may use it under the terms of the [Apache License, Version 2.0](LICENSE-APACHE). This license allows for free use, modification, and distribution, as long as you include the copyright notice, license text, and any modifications made to the software are clearly marked.
+If you are using this software in a free software project, you may use it under the terms of the [Apache License, Version 2.0](LICENSE-APACHE.txt). This license allows for free use, modification, and distribution, as long as you include the copyright notice, license text, and any modifications made to the software are clearly marked.
 
 ## For Non-Free Software Projects
 
