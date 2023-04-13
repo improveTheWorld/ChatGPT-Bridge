@@ -8,6 +8,8 @@ ChatGPT-Bridge is an experimental Microsoft Edge plugin designed to seamlessly i
 
 This plugin provides API-like access to GPT-3.5 and GPT-4 without the need for a long waiting period. ChatGPT-Bridge offers free access to GPT-3.5 AI, while using it with GPT-4 requires a ChatGPT Plus account but incurs no additional fees.
 
+This plugin is part of an upcoming project, which gives ChatGPT access to the Windows prompt to execute commands necessary for completing tasks assigned to it by the user, thus unlocking unlimited capabilities of ChatGPT - **stay tuned!**
+
 **Note:** Since ChatGPT Monitor is still in the experimental stage, there may be potential bugs and limitations. We appreciate your understanding and welcome any feedback to help us improve the plugin.
 
 ## 🌟 Features
