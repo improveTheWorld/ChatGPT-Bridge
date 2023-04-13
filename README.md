@@ -1,6 +1,6 @@
 # ChatGPT-Bridge
 
-![ChatGPT Monitor Logo](./assets/logo.png)
+![ChatGPT-Bridge Logo](./assets/logo.png)
 
 
 #### Tired of waiting for access to GPT-4 API?!! Here’s the solution! 
@@ -10,7 +10,7 @@ This plugin provides API-like access to GPT-3.5 and GPT-4 without the need for a
 
 This plugin is part of an upcoming project, which gives ChatGPT access to the Windows prompt to execute commands necessary for completing tasks assigned to it by the user, thus unlocking unlimited capabilities of ChatGPT - **stay tuned!**
 
-**Note:** Since ChatGPT Monitor is still in the experimental stage, there may be potential bugs and limitations. We appreciate your understanding and welcome any feedback to help us improve the plugin.
+**Note:** Since ChatGPT-Bridge is still in the experimental stage, there may be potential bugs and limitations. We appreciate your understanding and welcome any feedback to help us improve the plugin.
 
 ## 🌟 Features
 
@@ -31,15 +31,15 @@ This plugin is part of an upcoming project, which gives ChatGPT access to the Wi
 
 1. Clone the repository:
 
-   git clone https://github.com/your_username/chatgpt-monitor.git
+   git clone https://github.com/improveTheWorld/ChatGPT-Bridge.git
     
 2. Open Microsoft Edge and navigate to `edge://extensions`.
 
 3. Enable "Developer Mode" in the top-right corner.
 
-4. Click on "Load Unpacked" and select the `chatgpt-monitor` folder.
+4. Click on "Load Unpacked" and select the `chatgpt-bridge` folder.
 
-5. The ChatGPT Monitor plugin should now be visible in the extensions list and ready for use!
+5. The ChatGPT-Bridge plugin should now be visible in the extensions list and ready for use!
 
 ## 🛠️ Usage
 
