@@ -82,7 +82,7 @@ If you have any questions or suggestions, please feel free to reach out to us:
 
 ## 🎉 Acknowledgments
 
-- [OpenAI](https://www.openai.com/) for the [ChatGPT assistant](https://chat.openai.com/chat)
+- [OpenAI](https://www.openai.com/) for the [ChatGPT](https://chat.openai.com/chat) website
 - [Microsoft Edge](https://www.microsoft.com/en-us/edge) for providing the browser platform
 - All contributors who have helped improve ChatGPT-Bridge
 - The amazing open-source community for their invaluable resources and inspiration
