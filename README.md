@@ -1,14 +1,17 @@
 # ChatGPT-Bridge
 
-![ChatGPT Monitor Logo](./assets/logo.png)
+![ChatGPT-Bridge Logo](./icon48.png)
 
 
-#### Tired of waiting for access to GPT-4 API?!! Here’s the solution! 
+**Tired of waiting for access to GPT-4 API?!! Here’s the solution!**
+
 ChatGPT-Bridge is an experimental Microsoft Edge plugin designed to seamlessly integrate ChatGPT with third-party software. It achieves this by intercepting ChatGPT messages, transmitting them over a WebSocket, receiving the response from the third-party software, and injecting the answer back into the chat session. This process empowers ChatGPT with a vast array of applications and unlocks its full potential.
 
 This plugin provides API-like access to GPT-3.5 and GPT-4 without the need for a long waiting period. ChatGPT-Bridge offers free access to GPT-3.5 AI, while using it with GPT-4 requires a ChatGPT Plus account but incurs no additional fees.
 
-**Note:** Since ChatGPT Monitor is still in the experimental stage, there may be potential bugs and limitations. We appreciate your understanding and welcome any feedback to help us improve the plugin.
+This plugin is part of an upcoming project, which gives ChatGPT access to the Windows prompt to execute commands necessary for completing tasks assigned to it by the user, thus unlocking unlimited capabilities of ChatGPT - **stay tuned!**
+
+**Note:** Since ChatGPT-Bridge is still in the experimental stage, there may be potential bugs and limitations. We appreciate your understanding and welcome any feedback to help us improve the plugin.
 
 ## 🌟 Features
 
@@ -29,19 +32,19 @@ This plugin provides API-like access to GPT-3.5 and GPT-4 without the need for a
 
 1. Clone the repository:
 
-   git clone https://github.com/your_username/chatgpt-monitor.git
+   git clone https://github.com/improveTheWorld/ChatGPT-Bridge.git
     
 2. Open Microsoft Edge and navigate to `edge://extensions`.
 
 3. Enable "Developer Mode" in the top-right corner.
 
-4. Click on "Load Unpacked" and select the `chatgpt-monitor` folder.
+4. Click on "Load Unpacked" and select the `chatgpt-bridge` folder.
 
-5. The ChatGPT Monitor plugin should now be visible in the extensions list and ready for use!
+5. The ChatGPT-Bridge plugin should now be visible in the extensions list and ready for use!
 
 ## 🛠️ Usage
 
-1. After installing the plugin, click the plugin button on the top part of the browser to open a popup with two buttons: "Start" to initiate bridging with the third-party software, and "Stop" to end the connection.
+1. After installing the plugin, go to [ChatGPT](https://chat.openai.com/chat) website, click the plugin button on the top part of the browser to open a popup with two buttons: "Start" to initiate bridging with the third-party software, and "Stop" to end the connection.
 
 2. The default WebSocket communication is done over port 8181. You can change the port in the config.json file if necessary.
 
@@ -52,7 +55,7 @@ This plugin provides API-like access to GPT-3.5 and GPT-4 without the need for a
 
 ## 📚 Documentation
 
-For more detailed information on how to use ChatGPT Monitor, please refer to the [Wiki](https://github.com/your_username/chatgpt-monitor/wiki).
+For more detailed information on how to use ChatGPT-Bridge, please refer to the [Wiki](https://github.com/improveTheWorld/ChatGPT-Bridge/wiki).
 
 ## 📧 Contributing
 
@@ -76,14 +79,14 @@ Please read our [Contributing Guidelines](./CONTRIBUTING.md) for more details.
 If you have any questions or suggestions, please feel free to reach out to us:
 
 - [B.GATRI](mailto:bilelgatri@gmail.com)
-- [Project Link](https://github.com/your_username/chatgpt-monitor)
+- [Project Link](https://github.com/improveTheWorld/ChatGPT-Bridge)
 
 ## 🎉 Acknowledgments
 
-- [OpenAI](https://www.openai.com/) for the [ChatGPT assistant](https://chat.openai.com/chat)
+- [OpenAI](https://www.openai.com/) for the [ChatGPT](https://chat.openai.com/chat) website
 - [Microsoft Edge](https://www.microsoft.com/en-us/edge) for providing the browser platform
-- All contributors who have helped improve ChatGPT Monitor
+- All contributors who have helped improve ChatGPT-Bridge
 - The amazing open-source community for their invaluable resources and inspiration
-- Our users and testers for providing essential feedback that helps us improve ChatGPT Monitor
+- Our users and testers for providing essential feedback that helps us improve ChatGPT-Bridge
 
 **Join us on this exciting journey to unlock the unlimited power and potential of ChatGPT! Stay tuned for future updates and the upcoming release of the other part of the project, which will bring even more groundbreaking features and possibilities. Together, we can revolutionize the way we interact with AI-powered language models!**
