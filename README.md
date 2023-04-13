@@ -54,7 +54,7 @@ This plugin is part of an upcoming project, which gives ChatGPT access to the Wi
 
 ## 📚 Documentation
 
-For more detailed information on how to use ChatGPT Monitor, please refer to the [Wiki](https://github.com/your_username/chatgpt-monitor/wiki).
+For more detailed information on how to use ChatGPT-Bridge, please refer to the [Wiki](https://github.com/improveTheWorld/ChatGPT-Bridge/wiki).
 
 ## 📧 Contributing
 
@@ -78,14 +78,14 @@ Please read our [Contributing Guidelines](./CONTRIBUTING.md) for more details.
 If you have any questions or suggestions, please feel free to reach out to us:
 
 - [B.GATRI](mailto:bilelgatri@gmail.com)
-- [Project Link](https://github.com/your_username/chatgpt-monitor)
+- [Project Link](https://github.com/improveTheWorld/ChatGPT-Bridge)
 
 ## 🎉 Acknowledgments
 
 - [OpenAI](https://www.openai.com/) for the [ChatGPT assistant](https://chat.openai.com/chat)
 - [Microsoft Edge](https://www.microsoft.com/en-us/edge) for providing the browser platform
-- All contributors who have helped improve ChatGPT Monitor
+- All contributors who have helped improve ChatGPT-Bridge
 - The amazing open-source community for their invaluable resources and inspiration
-- Our users and testers for providing essential feedback that helps us improve ChatGPT Monitor
+- Our users and testers for providing essential feedback that helps us improve ChatGPT-Bridge
 
 **Join us on this exciting journey to unlock the unlimited power and potential of ChatGPT! Stay tuned for future updates and the upcoming release of the other part of the project, which will bring even more groundbreaking features and possibilities. Together, we can revolutionize the way we interact with AI-powered language models!**
