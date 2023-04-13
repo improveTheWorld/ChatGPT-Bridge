@@ -111,7 +111,9 @@ function sendMessageToWebSocketServer(message) {
 }
 
 function startWebSocket() {
-  ws = new WebSocket('ws://127.0.0.1:8181');
+  
+
+  ws = new WebSocket(`ws://127.0.0.1:${config.communicationPort}`); 
 
   ws.addEventListener('message', (event) => {
     const output = event.data;
@@ -138,9 +140,9 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       monitoringChat = true;
       intervalId = setInterval(checkForNewCommands, config.pollingFrequency);
       startWebSocket();
-      sendResponse({ message: 'Started monitoring chat' });
+      sendResponse({ message: 'Started bridging chat' });
     } else {
-      sendResponse({ message: 'Already monitoring chat' });
+      sendResponse({ message: 'Already bridging chat' });
     }
   } else if (request.stop) {
     if (monitoringChat) {
@@ -150,9 +152,9 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         ws.close();
         ws = null;
       }
-      sendResponse({ message: 'Stopped monitoring chat' });
+      sendResponse({ message: 'Stopped bridging chat' });
     } else {
-      sendResponse({ message: 'Not currently monitoring chat' });
+      sendResponse({ message: 'Not currently bridging chat' });
     }
   }
 });

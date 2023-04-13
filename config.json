@@ -2,5 +2,6 @@
   "pollingFrequency": 1000,
   "messageCompletionTime": 3000,
   "streamingMode": false,
-  "feedbackDelay":100
+  "communicationPort": 8181,
+  "feedbackDelay": 1000
 }
