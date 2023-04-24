@@ -69,38 +69,97 @@ function checkForNewCommands() {
   }
 }
 
-function clickSendButton(sendButton)
-{
-  // Check if the send button is active and simulate a click
-  if (!sendButton.hasAttribute('disabled')) {
-    sendButton.click();
-  } else {
-    console.log("Send button is not active.");
-  }
-}
+// function clickSendButton(sendButton)
+// {
+  // // Check if the send button is active and simulate a click
+  // if (!sendButton.hasAttribute('disabled')) {
+    
+    // //reset message reading variables
+    // completeMessage = '';
+    // previousMessage = '';
+    // previousMessageTimestamp = 0;
+    // //stopMonitoring();
+    // sendButton.click();
+  // } else {
+    // console.log("Send button is not active.");
+  // }
+// }
+
+// function sendFeedBack(message) {
+  // const textarea = document.querySelector('textarea[placeholder="Send a message..."]');
+  // const sendButton = document.querySelector('textarea[placeholder="Send a message..."]').parentElement.parentElement.querySelector('button');
+
+  // if (!textarea || !sendButton) {
+    // console.error('Unable to find textarea or send button.');
+    // return;
+  // }
+
+  // const words = message.split(' ');
+  // let wordIndex = 0;
+
+  // function appendWord() {
+    // if (wordIndex < words.length) {
+      // textarea.value += words[wordIndex] + ' ';
+      // // Trigger the input event to let the website know the textarea value has changed
+      // const inputEvent = new Event('input', { bubbles: true });
+      // textarea.dispatchEvent(inputEvent);
+
+      // wordIndex++;
+      // setTimeout(appendWord, config.wordAppendDelay);
+    // } else {
+      // // All words have been appended, click the send button after a delay
+      // setTimeout(() => {
+        // clickSendButton(sendButton);
+      // }, config.feedbackDelay);
+    // }
+  // }
+
+  // // Start appending words with a delay
+  // setTimeout(appendWord, config.wordAppendDelay);
+// }
 
 function sendFeedBack(message) {
-  const textarea = document.querySelector('textarea[placeholder="Send a message..."]');
-   const sendButton = document.querySelector('textarea[placeholder="Send a message..."]').parentElement.parentElement.querySelector('button');
+  // Find the textarea and send button
+  const textarea = document.querySelector('textarea.w-full');
+  const sendButton = document.querySelector('textarea.w-full').closest('div').querySelector('button');
 
   if (!textarea || !sendButton) {
     console.error('Unable to find textarea or send button.');
     return;
   }
 
-  textarea.value = message;
+  // Focus on the textarea
+  textarea.focus();
 
-  // Trigger the input event to let the website know the textarea value has changed
-  const inputEvent = new Event('input', { bubbles: true });
-  textarea.dispatchEvent(inputEvent);
-  
- // Delay the clickSendButton by 1 second
-    setTimeout(() => {
-      clickSendButton(sendButton);
-    }, config.feedbackDelay);
+  // Add the message to the textarea
+  const existingText = textarea.value;
+  if (!existingText) {
+    textarea.value = message;
+  } else {
+    textarea.value = existingText + ' ' + message;
+  }
 
+  // Adjust the textarea height based on the content length
+  const rows = Math.ceil((existingText.length + message.length) / 88);
+  const height = rows * 24;
+  textarea.style.height = height + 'px';
+
+  // Enable the send button if it's disabled
+  if (sendButton.hasAttribute('disabled')) {
+    sendButton.removeAttribute('disabled');
+  }
+
+  // Click the send button after a delay
+  setTimeout(() => {
+    sendButton.click();
+  }, config.feedbackDelay);
   
+    //reset message reading variables
+    completeMessage = '';
+    previousMessage = '';
+    previousMessageTimestamp = 0;
 }
+
 
 function sendMessageToWebSocketServer(message) {
   if (ws && ws.readyState === WebSocket.OPEN) {
@@ -132,6 +191,19 @@ function startWebSocket() {
     console.log('WebSocket error:', event);
 
   });
+}
+
+
+function stopMonitoring()
+{
+  if (monitoringChat) {
+    monitoringChat = false;
+    clearInterval(intervalId);
+    if (ws) {
+      ws.close();
+      ws = null;
+    }     
+  } 
 }
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
