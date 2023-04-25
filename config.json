@@ -4,5 +4,5 @@
   "streamingMode": false,
   "communicationPort": 8181,
   "feedbackDelay": 200,
-  "wordAppendDelay": 0
+  "reconnectInterval": 1000
 }

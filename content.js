@@ -31,39 +31,6 @@ let intervalId = null;
 let config = null;
 let ws;
 
-const reconnectInterval = 1000;
-//const statusConnection = document.createElement('p');
-
-//statusConnection.style.display = 'none';
-
-//document.body.appendChild(statusConnection);
-
-
-async function loadConfig() {
-    try {
-        const response = await fetch(chrome.runtime.getURL('config.json'));
-        config = await response.json();
-    } catch (error) {
-        console.error('Error loading config:', error);
-    }
-}
-
-async function init() {
-    await loadConfig();        
-    startWebSocket();
-
-}
-
-
-// Load config.json
-//fetch(chrome.runtime.getURL('config.json'))
-//    .then((response) => response.json())
-//    .then((loadedConfig) => {
-//        config = loadedConfig;
-//    })
-//    .catch((error) => {
-//        console.error('Error loading config:', error);
-//    });
 
 function checkForNewCommands() {
     if (!config) return;
@@ -152,7 +119,7 @@ function updateConnectionStatus(status) {
                 console.log('Error sending message:', chrome.runtime.lastError);
                 setTimeout(() => {
                     updateConnectionStatus(status);
-                }, reconnectInterval);
+                }, config.reconnectInterval);
                 return;
             }
             else
@@ -195,7 +162,7 @@ function startWebSocket() {
 
         setTimeout(() => {
             startWebSocket();
-        }, reconnectInterval);
+        }, config.reconnectInterval);
     });
 
     ws.addEventListener('close', (event) => {
@@ -204,7 +171,7 @@ function startWebSocket() {
 
         setTimeout(() => {
             startWebSocket();
-        }, reconnectInterval);
+        }, config.reconnectInterval);
     });
 }
 
@@ -226,6 +193,21 @@ function stopMonitoring(sendResponse) {
     } else {
         sendResponse({ message: 'Not currently bridging chat' });
     }
+}
+
+async function loadConfig() {
+    try {
+        const response = await fetch(chrome.runtime.getURL('config.json'));
+        config = await response.json();
+    } catch (error) {
+        console.error('Error loading config:', error);
+    }
+}
+
+async function init() {
+    await loadConfig();
+    startWebSocket();
+
 }
 
 /////////////////////////  Main Program  ///////////////////////////
