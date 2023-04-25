@@ -3,5 +3,6 @@
   "messageCompletionTime": 3000,
   "streamingMode": false,
   "communicationPort": 8181,
-  "feedbackDelay": 1000
+  "feedbackDelay": 200,
+  "wordAppendDelay": 0
 }

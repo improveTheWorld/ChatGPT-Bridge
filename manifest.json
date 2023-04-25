@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Chat Monitor",
+  "name": "ChatGPT Bridge",
   "version": "1.0",
-  "permissions": ["tabs"],
+  "permissions": ["activeTab", "storage", "tabs"],
   "action": {
     "default_popup": "popup.html",
     "default_icon": {
@@ -14,18 +14,18 @@
   },
   "content_scripts": [
     {
-      "matches": ["<all_urls>"],
-      "js": ["content.js"]
+      "matches": ["https://chat.openai.com/*"],
+      "js": [ "content.js" ]
     }
   ],
-  "host_permissions": ["<all_urls>"],
+  "host_permissions": [ "https://chat.openai.com/*" ],
   "icons": {
     "48": "icon48.png"
   },
   "web_accessible_resources": [
     {
-      "resources": ["config.json"],
-      "matches": ["<all_urls>"]
+      "resources": [ "config.json" ],
+      "matches": [ "https://chat.openai.com/*" ]
     }
   ]
 }

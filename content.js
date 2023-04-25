@@ -1,5 +1,5 @@
 // # File: content.js
-// # Software: ChatGPT Monitor
+// # Software: ChatGPT Bridge
 // # Purpose: Provide third-party software with the capability to utilize ChatGPT.
 // #
 // # Copyright 2023 B.GATRI
@@ -31,202 +31,213 @@ let intervalId = null;
 let config = null;
 let ws;
 
-// Load config.json
-fetch(chrome.runtime.getURL('config.json'))
-  .then((response) => response.json())
-  .then((loadedConfig) => {
-    config = loadedConfig;
-  })
-  .catch((error) => {
-    console.error('Error loading config:', error);
-  });
+const reconnectInterval = 1000;
+//const statusConnection = document.createElement('p');
 
-function checkForNewCommands() {
-  if (!config) return;
+//statusConnection.style.display = 'none';
 
-  const messageElement = document.querySelector('div.group:nth-last-child(2) div.markdown.prose');
-  
-  if (!messageElement) return;
+//document.body.appendChild(statusConnection);
 
-  const newMessage = messageElement.innerText.trim();
 
-  // Continue reading the most recent received message until it doesn't change during the defined time
-  if (newMessage !== previousMessage) {
-    if (config.streamingMode) {      
-      appendedMessage = newMessage.slice(previousMessage.length).trim();
-      console.log(appendedMessage);
-      sendMessageToWebSocketServer(appendedMessage);
-
+async function loadConfig() {
+    try {
+        const response = await fetch(chrome.runtime.getURL('config.json'));
+        config = await response.json();
+    } catch (error) {
+        console.error('Error loading config:', error);
     }
-    previousMessage = newMessage;
-    previousMessageTimestamp = Date.now();
-  } else if (Date.now() - previousMessageTimestamp >= config.messageCompletionTime && !config.streamingMode) {
-    if (newMessage !== completeMessage) {
-      completeMessage = newMessage;
-      console.log('Most recent received message:', completeMessage);
-      sendMessageToWebSocketServer(completeMessage);
-    }
-  }
 }
 
-// function clickSendButton(sendButton)
-// {
-  // // Check if the send button is active and simulate a click
-  // if (!sendButton.hasAttribute('disabled')) {
-    
-    // //reset message reading variables
-    // completeMessage = '';
-    // previousMessage = '';
-    // previousMessageTimestamp = 0;
-    // //stopMonitoring();
-    // sendButton.click();
-  // } else {
-    // console.log("Send button is not active.");
-  // }
-// }
+async function init() {
+    await loadConfig();        
+    startWebSocket();
 
-// function sendFeedBack(message) {
-  // const textarea = document.querySelector('textarea[placeholder="Send a message..."]');
-  // const sendButton = document.querySelector('textarea[placeholder="Send a message..."]').parentElement.parentElement.querySelector('button');
+}
 
-  // if (!textarea || !sendButton) {
-    // console.error('Unable to find textarea or send button.');
-    // return;
-  // }
 
-  // const words = message.split(' ');
-  // let wordIndex = 0;
+// Load config.json
+//fetch(chrome.runtime.getURL('config.json'))
+//    .then((response) => response.json())
+//    .then((loadedConfig) => {
+//        config = loadedConfig;
+//    })
+//    .catch((error) => {
+//        console.error('Error loading config:', error);
+//    });
 
-  // function appendWord() {
-    // if (wordIndex < words.length) {
-      // textarea.value += words[wordIndex] + ' ';
-      // // Trigger the input event to let the website know the textarea value has changed
-      // const inputEvent = new Event('input', { bubbles: true });
-      // textarea.dispatchEvent(inputEvent);
+function checkForNewCommands() {
+    if (!config) return;
 
-      // wordIndex++;
-      // setTimeout(appendWord, config.wordAppendDelay);
-    // } else {
-      // // All words have been appended, click the send button after a delay
-      // setTimeout(() => {
-        // clickSendButton(sendButton);
-      // }, config.feedbackDelay);
-    // }
-  // }
+    const messageElement = document.querySelector('div.group:nth-last-child(2) div.markdown.prose');
 
-  // // Start appending words with a delay
-  // setTimeout(appendWord, config.wordAppendDelay);
-// }
+    if (!messageElement) return;
+
+    const newMessage = messageElement.innerText.trim();
+
+    // Continue reading the most recent received message until it doesn't change during the defined time
+    if (newMessage !== previousMessage) {
+        if (config.streamingMode) {
+            appendedMessage = newMessage.slice(previousMessage.length).trim();
+            console.log(appendedMessage);
+            sendMessageToWebSocketServer(appendedMessage);
+
+        }
+        previousMessage = newMessage;
+        previousMessageTimestamp = Date.now();
+    } else if (Date.now() - previousMessageTimestamp >= config.messageCompletionTime && !config.streamingMode) {
+        if (newMessage !== completeMessage) {
+            completeMessage = newMessage;
+            console.log('Most recent received message:', completeMessage);
+            sendMessageToWebSocketServer(completeMessage);
+        }
+    }
+}
 
 function sendFeedBack(message) {
-  // Find the textarea and send button
-  const textarea = document.querySelector('textarea.w-full');
-  const sendButton = document.querySelector('textarea.w-full').closest('div').querySelector('button');
+    // Find the textarea and send button
+    const textarea = document.querySelector('textarea.w-full');
+    const sendButton = document.querySelector('textarea.w-full').closest('div').querySelector('button');
 
-  if (!textarea || !sendButton) {
-    console.error('Unable to find textarea or send button.');
-    return;
-  }
+    if (!textarea || !sendButton) {
+        console.error('Unable to find textarea or send button.');
+        return;
+    }
 
-  // Focus on the textarea
-  textarea.focus();
+    // Focus on the textarea
+    textarea.focus();
 
-  // Add the message to the textarea
-  const existingText = textarea.value;
-  if (!existingText) {
-    textarea.value = message;
-  } else {
-    textarea.value = existingText + ' ' + message;
-  }
+    // Add the message to the textarea
+    const existingText = textarea.value;
+    if (!existingText) {
+        textarea.value = message;
+    } else {
+        textarea.value = existingText + ' ' + message;
+    }
 
-  // Adjust the textarea height based on the content length
-  const rows = Math.ceil((existingText.length + message.length) / 88);
-  const height = rows * 24;
-  textarea.style.height = height + 'px';
+    // Adjust the textarea height based on the content length
+    const rows = Math.ceil((existingText.length + message.length) / 88);
+    const height = rows * 24;
+    textarea.style.height = height + 'px';
 
-  // Enable the send button if it's disabled
-  if (sendButton.hasAttribute('disabled')) {
-    sendButton.removeAttribute('disabled');
-  }
+    // Enable the send button if it's disabled
+    if (sendButton.hasAttribute('disabled')) {
+        sendButton.removeAttribute('disabled');
+    }
 
-  // Click the send button after a delay
-  setTimeout(() => {
-    sendButton.click();
-  }, config.feedbackDelay);
-  
+    // Click the send button after a delay
+    setTimeout(() => {
+        sendButton.click();
+    }, config.feedbackDelay);
+
     //reset message reading variables
     completeMessage = '';
     previousMessage = '';
     previousMessageTimestamp = 0;
 }
 
-
 function sendMessageToWebSocketServer(message) {
-  if (ws && ws.readyState === WebSocket.OPEN) {
-    ws.send(message);
-  } else {
-    console.log('WebSocket is not connected or not in the open state.');
-  }
+    if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(message);
+    } else {
+        console.log('WebSocket is not connected or not in the open state.');
+    }
+}
+
+
+function updateConnectionStatus(status) {
+
+    try {
+        chrome.runtime.sendMessage({ connectionStatus: status }, (response) => {
+            if (chrome.runtime.lastError) {
+                console.log('Error sending message:', chrome.runtime.lastError);
+                setTimeout(() => {
+                    updateConnectionStatus(status);
+                }, reconnectInterval);
+                return;
+            }
+            else
+            {
+                console.log("response");
+                
+            }
+
+        });
+            if (chrome.runtime.lastError) {
+                console.log('Error sending message1:', chrome.runtime.lastError);
+                return;
+            }
+
+    } catch (error) {
+       
+        console.error('Retry updateConnectionStatus later');
+    }
+   
 }
 
 function startWebSocket() {
-  
 
-  ws = new WebSocket(`ws://127.0.0.1:${config.communicationPort}`); 
+    ws = new WebSocket(`ws://127.0.0.1:${config.communicationPort}`);
 
-  ws.addEventListener('message', (event) => {
-    const output = event.data;
-    sendFeedBack(output);
-  });
-  
-  ws.addEventListener('open', (event) => {
-    console.log('WebSocket connection opened:', event);
-  });
+    ws.addEventListener('message', (event) => {
+        const output = event.data;
+        sendFeedBack(output);
+    });
 
-  ws.addEventListener('close', (event) => {
-    console.log('WebSocket connection closed:', event);
-  });
+    ws.addEventListener('open', (event) => {
+        console.log('WebSocket connection opened:', event);
+        updateConnectionStatus('connected');
+        
+    });
 
-  ws.addEventListener('error', (event) => {
-    console.log('WebSocket error:', event);
+    ws.addEventListener('error', (event) => {
+        console.log('WebSocket error:', event);
+        updateConnectionStatus('disconnected');
 
-  });
+        setTimeout(() => {
+            startWebSocket();
+        }, reconnectInterval);
+    });
+
+    ws.addEventListener('close', (event) => {
+        console.log('WebSocket connection closed:', event);
+        updateConnectionStatus('disconnected');
+
+        setTimeout(() => {
+            startWebSocket();
+        }, reconnectInterval);
+    });
 }
 
-
-function stopMonitoring()
-{
-  if (monitoringChat) {
-    monitoringChat = false;
-    clearInterval(intervalId);
-    if (ws) {
-      ws.close();
-      ws = null;
-    }     
-  } 
+function startMonitoring(sendResponse) {
+    if (!monitoringChat) {
+        monitoringChat = true;
+        intervalId = setInterval(checkForNewCommands, config.pollingFrequency);
+        sendResponse({ message: 'Started bridging chat' });
+    } else {
+        sendResponse({ message: 'Already bridging chat' });
+    }
 }
+
+function stopMonitoring(sendResponse) {
+    if (monitoringChat) {
+        monitoringChat = false;
+        clearInterval(intervalId);
+        sendResponse({ message: 'Stopped bridging chat' });
+    } else {
+        sendResponse({ message: 'Not currently bridging chat' });
+    }
+}
+
+/////////////////////////  Main Program  ///////////////////////////
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if (request.start) {
-    if (!monitoringChat) {
-      monitoringChat = true;
-      intervalId = setInterval(checkForNewCommands, config.pollingFrequency);
-      startWebSocket();
-      sendResponse({ message: 'Started bridging chat' });
-    } else {
-      sendResponse({ message: 'Already bridging chat' });
+    if (request.start) {
+        startMonitoring(sendResponse);
+    } else if (request.stop) {
+        stopMonitoring(sendResponse);
     }
-  } else if (request.stop) {
-    if (monitoringChat) {
-      monitoringChat = false;
-      clearInterval(intervalId);
-      if (ws) {
-        ws.close();
-        ws = null;
-      }
-      sendResponse({ message: 'Stopped bridging chat' });
-    } else {
-      sendResponse({ message: 'Not currently bridging chat' });
-    }
-  }
 });
+
+init();
+
+

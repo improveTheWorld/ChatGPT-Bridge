@@ -1,5 +1,5 @@
 // # File: background.js
-// # Software: ChatGPT Monitor
+// # Software: ChatGPT Bridge
 // # Purpose: Provide third-party software with the capability to utilize ChatGPT.
 // #
 // # Copyright 2023 B.GATRI
@@ -24,5 +24,5 @@
 // # limitations under the License.
 
 chrome.runtime.onInstalled.addListener(() => {
-  console.log('Chat Monitor extension installed');
+  console.log('Chat Bridge extension installed');
 });
