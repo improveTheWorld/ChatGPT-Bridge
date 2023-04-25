@@ -27,9 +27,9 @@ let completeMessage = '';
 let previousMessage = '';
 let previousMessageTimestamp = 0;
 let monitoringChat = false;
-let intervalId = null;
+let mostRecentMessagePollingIntervalId = null;
 let config = null;
-let ws;
+let connectionStatusValue = 'disconnected';
 
 
 function checkForNewCommands() {
@@ -110,35 +110,17 @@ function sendMessageToWebSocketServer(message) {
     }
 }
 
+function notifyConnectionStatus() {
 
-function updateConnectionStatus(status) {
-
-    try {
-        chrome.runtime.sendMessage({ connectionStatus: status }, (response) => {
-            if (chrome.runtime.lastError) {
-                console.log('Error sending message:', chrome.runtime.lastError);
-                setTimeout(() => {
-                    updateConnectionStatus(status);
-                }, config.reconnectInterval);
-                return;
-            }
-            else
-            {
-                console.log("response");
-                
-            }
-
-        });
-            if (chrome.runtime.lastError) {
-                console.log('Error sending message1:', chrome.runtime.lastError);
-                return;
-            }
-
-    } catch (error) {
-       
-        console.error('Retry updateConnectionStatus later');
-    }
-   
+    chrome.runtime.sendMessage({ connectionStatus: connectionStatusValue }, (response) => {
+        if (chrome.runtime.lastError) {
+            console.log('Error sending message:', chrome.runtime.lastError);                
+        }
+        else
+        {
+            console.log("response");                
+        }
+    });
 }
 
 function startWebSocket() {
@@ -150,16 +132,15 @@ function startWebSocket() {
         sendFeedBack(output);
     });
 
+    
     ws.addEventListener('open', (event) => {
         console.log('WebSocket connection opened:', event);
-        updateConnectionStatus('connected');
-        
+        connectionStatusValue = 'connected';       
     });
 
     ws.addEventListener('error', (event) => {
         console.log('WebSocket error:', event);
-        updateConnectionStatus('disconnected');
-
+        connectionStatusValue = 'disconnected';
         setTimeout(() => {
             startWebSocket();
         }, config.reconnectInterval);
@@ -167,7 +148,7 @@ function startWebSocket() {
 
     ws.addEventListener('close', (event) => {
         console.log('WebSocket connection closed:', event);
-        updateConnectionStatus('disconnected');
+        connectionStatusValue = 'disconnected';
 
         setTimeout(() => {
             startWebSocket();
@@ -178,7 +159,7 @@ function startWebSocket() {
 function startMonitoring(sendResponse) {
     if (!monitoringChat) {
         monitoringChat = true;
-        intervalId = setInterval(checkForNewCommands, config.pollingFrequency);
+        mostRecentMessagePollingIntervalId = setInterval(checkForNewCommands, config.pollingFrequency);
         sendResponse({ message: 'Started bridging chat' });
     } else {
         sendResponse({ message: 'Already bridging chat' });
@@ -188,7 +169,7 @@ function startMonitoring(sendResponse) {
 function stopMonitoring(sendResponse) {
     if (monitoringChat) {
         monitoringChat = false;
-        clearInterval(intervalId);
+        clearInterval(mostRecentMessagePollingIntervalId);
         sendResponse({ message: 'Stopped bridging chat' });
     } else {
         sendResponse({ message: 'Not currently bridging chat' });
@@ -207,7 +188,7 @@ async function loadConfig() {
 async function init() {
     await loadConfig();
     startWebSocket();
-
+    setInterval(notifyConnectionStatus, config.reconnectInterval);
 }
 
 /////////////////////////  Main Program  ///////////////////////////

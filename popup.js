@@ -24,12 +24,13 @@
 // # limitations under the License.
 
 const startStopButton = document.querySelector('#startButton');
-const logElement = document.querySelector('#log');
+//const logElement = document.querySelector('#log');
 let monitoring = false;
 let connectionStatus = 'disconnected';
 
 function logMessage(message) {
-    logElement.textContent += message + '\n';
+    //logElement.textContent += message + '\n';
+    console.log('LOG:' + message)
 }
 
 // Add this function to the existing popup.js
