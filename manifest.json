@@ -15,16 +15,17 @@
   "content_scripts": [
     {
       "matches": ["https://chat.openai.com/*"],
-      "js": [ "content.js" ]
+      "js": ["content.js"],
+      "run_at": "document_end"
     }
   ],
-  "host_permissions": [ "https://chat.openai.com/*" ],
+  "host_permissions": ["https://chat.openai.com/*"],
   "icons": {
     "48": "icon48.png"
   },
-  "web_accessible_resources": [
+    "web_accessible_resources": [
     {
-      "resources": [ "config.json" ],
+      "resources": [ "config.json", "injected-popup.js" ],
       "matches": [ "https://chat.openai.com/*" ]
     }
   ]

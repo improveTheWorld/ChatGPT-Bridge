@@ -22,81 +22,88 @@
 // # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // # See the License for the specific language governing permissions and
 // # limitations under the License.
+(async () => {
+  const startStopButton = document.querySelector('#startButton');
+  //const logElement = document.querySelector('#log');
+  let monitoring = false;
+  let connectionStatus = 'disconnected';
 
-const startStopButton = document.querySelector('#startButton');
-//const logElement = document.querySelector('#log');
-let monitoring = false;
-let connectionStatus = 'disconnected';
+  function logMessage(message) {
+      //logElement.textContent += message + '\n';
+      console.log('LOG:' + message)
+  }
 
-function logMessage(message) {
-    //logElement.textContent += message + '\n';
-    console.log('LOG:' + message)
-}
+ 
+  function updateButtonState() {
+      logMessage('Status : Connection ='+connectionStatus+', Monitoring ='+monitoring);
+      if (connectionStatus === 'connected') {
+          if (monitoring) {
+              startStopButton.innerHTML = '<i class="fas fa-play"></i> Stop';
+          } else {
+              startStopButton.innerHTML = '<i class="fas fa-play"></i> Start';
+          }
+          startStopButton.disabled = false;
+      } else {
+          startStopButton.innerHTML = '<i class="fas fa-play"></i> Connecting...';
+          startStopButton.disabled = true;
+      }
+  }
 
-// Add this function to the existing popup.js
-function updateButtonState() {
-    logMessage('Status : Connection ='+connectionStatus+', Monitoring ='+monitoring);
-    if (connectionStatus === 'connected') {
-        if (monitoring) {
-            startStopButton.innerHTML = '<i class="fas fa-play"></i> Stop';
-        } else {
-            startStopButton.innerHTML = '<i class="fas fa-play"></i> Start';
-        }
-        startStopButton.disabled = false;
-    } else {
-        startStopButton.innerHTML = '<i class="fas fa-play"></i> Connecting...';
-        startStopButton.disabled = true;
-    }
-}
+  ////////////////////////////////////// Main  ///////////////////////////////////
+  chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+      if (request.connectionStatus) {
+          connectionStatus = request.connectionStatus;
+          updateButtonState();
+          sendResponse('StartStopButton Updated');
+      }
+  });
 
-////////////////////////////////////// Main  ///////////////////////////////////
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    if (request.connectionStatus) {
-        connectionStatus = request.connectionStatus;
-        updateButtonState();
-        sendResponse('StartStopButton Updated');
-    }
-});
-
-document.addEventListener('DOMContentLoaded', () => {
-    startStopButton.addEventListener('click', () => {
-        monitoring = !monitoring;
-        updateButtonState();
-        if (monitoring) {
-            chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-                chrome.tabs.sendMessage(tabs[0].id, { start: true }, (response) => {
-                    if (chrome.runtime.lastError) {
-                        logMessage('Error: ' + chrome.runtime.lastError.message);
-                    } else {
-                        logMessage(response.message);
-                    }
-                });
-            });
-        } else {
-            chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-                chrome.tabs.sendMessage(tabs[0].id, { stop: true }, (response) => {
-                    if (chrome.runtime.lastError) {
-                        logMessage('Error: ' + chrome.runtime.lastError.message);
-                    } else {
-                        logMessage(response.message);
-                    }
-                });
-            });
-        }
-    });
-});
+  // document.addEventListener('DOMContentLoaded', () => {
+      startStopButton.addEventListener('click', () => {
+          monitoring = !monitoring;
+          updateButtonState();
+          if (monitoring) {
+              chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+                  chrome.tabs.sendMessage(tabs[0].id, { start: true }, (response) => {
+                      if (chrome.runtime.lastError) {
+                          logMessage('Error: ' + chrome.runtime.lastError.message);
+                      } else {
+                          logMessage(response.message);
+                      }
+                  });
+              });
+          } else {
+              chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+                  chrome.tabs.sendMessage(tabs[0].id, { stop: true }, (response) => {
+                      if (chrome.runtime.lastError) {
+                          logMessage('Error: ' + chrome.runtime.lastError.message);
+                      } else {
+                          logMessage(response.message);
+                      }
+                  });
+              });
+          }
+      });
+  // });
 
 
-// Add these lines to the existing popup.js to handle automatic start when the chat page is loaded
-chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-    if (tabs[0].url.startsWith('https://chat.openai.com/*')) {
-        startStopButton.click();
-    }
-});
+  // Add these lines to the existing popup.js to handle automatic start when the chat page is loaded
+  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      if (tabs[0].url.startsWith('https://chat.openai.com/*')) {
+          startStopButton.click();
+      }
+  });
 
-chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-    if (changeInfo.status === 'complete' && tab.url.startsWith('https://chat.openai.com/*')) {
-        startStopButton.click();
-    }
-});
+  chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+      if (changeInfo.status === 'complete' && tab.url.startsWith('https://chat.openai.com/*')) {
+          startStopButton.click();
+      }
+  });
+
+  // Load font-awesome icons
+  const link = document.createElement('link');
+  link.rel = 'stylesheet';
+  link.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.0/css/all.min.css';
+  document.head.appendChild(link);
+})();
 

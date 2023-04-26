@@ -30,7 +30,7 @@ let monitoringChat = false;
 let mostRecentMessagePollingIntervalId = null;
 let config = null;
 let connectionStatusValue = 'disconnected';
-
+let ws = null
 
 function checkForNewCommands() {
     if (!config) return;
@@ -111,17 +111,22 @@ function sendMessageToWebSocketServer(message) {
 }
 
 function notifyConnectionStatus() {
-
-    chrome.runtime.sendMessage({ connectionStatus: connectionStatusValue }, (response) => {
-        if (chrome.runtime.lastError) {
-            console.log('Error sending message:', chrome.runtime.lastError);                
-        }
-        else
-        {
-            console.log("response");                
-        }
-    });
+    emitEvent(connectionStatusValue);
 }
+
+
+// function notifyConnectionStatus() {
+
+// chrome.runtime.sendMessage({ connectionStatus: connectionStatusValue }, (response) => {
+// if (chrome.runtime.lastError) {
+// console.log('Error sending message:', chrome.runtime.lastError);                
+// }
+// else
+// {
+// console.log("response");                
+// }
+// });
+// }
 
 function startWebSocket() {
 
@@ -132,10 +137,10 @@ function startWebSocket() {
         sendFeedBack(output);
     });
 
-    
+
     ws.addEventListener('open', (event) => {
         console.log('WebSocket connection opened:', event);
-        connectionStatusValue = 'connected';       
+        connectionStatusValue = 'connected';
     });
 
     ws.addEventListener('error', (event) => {
@@ -156,23 +161,17 @@ function startWebSocket() {
     });
 }
 
-function startMonitoring(sendResponse) {
+function startMonitoring() {
     if (!monitoringChat) {
         monitoringChat = true;
-        mostRecentMessagePollingIntervalId = setInterval(checkForNewCommands, config.pollingFrequency);
-        sendResponse({ message: 'Started bridging chat' });
-    } else {
-        sendResponse({ message: 'Already bridging chat' });
+        mostRecentMessagePollingIntervalId = setInterval(checkForNewCommands, config.pollingFrequency);   
     }
 }
 
-function stopMonitoring(sendResponse) {
+function stopMonitoring() {
     if (monitoringChat) {
         monitoringChat = false;
         clearInterval(mostRecentMessagePollingIntervalId);
-        sendResponse({ message: 'Stopped bridging chat' });
-    } else {
-        sendResponse({ message: 'Not currently bridging chat' });
     }
 }
 
@@ -185,21 +184,53 @@ async function loadConfig() {
     }
 }
 
+
+
+function emitEvent(name, detail = null) {
+    const event = new CustomEvent(name, { detail });
+    window.dispatchEvent(event);
+}
+
+function injectPopup() {
+    const popupHtml = `
+    <div id="popup-container" style="position: fixed; top: 0px; right: 10px; z-index: 9999; background-color: #f5f5f5; padding: 10px; border-radius: 5px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2); width: 130px;">
+        <h2 id="topIcon"><i class="fas fa-chain-broken "></i> Bridge</h2>
+        <button id="startButton" disabled><i class="fas fa-play"></i></button>
+    </div>`;
+
+    const parser = new DOMParser();
+    const popupDOM = parser.parseFromString(popupHtml, 'text/html');
+    document.body.appendChild(popupDOM.querySelector('#popup-container'));
+
+    // Inject the injected-popup.js script into the chat page
+    const script = document.createElement('script');
+    script.src = chrome.runtime.getURL('injected-popup.js');
+    (document.head || document.documentElement).appendChild(script);
+
+    //setupButtonListeners();
+
+}
+
 async function init() {
     await loadConfig();
+    injectPopup();
     startWebSocket();
     setInterval(notifyConnectionStatus, config.reconnectInterval);
 }
 
+
 /////////////////////////  Main Program  ///////////////////////////
 
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    if (request.start) {
-        startMonitoring(sendResponse);
-    } else if (request.stop) {
-        stopMonitoring(sendResponse);
-    }
+window.addEventListener('startMonitoring', () => {
+    startMonitoring();
 });
+
+window.addEventListener('stopMonitoring', () => {
+    stopMonitoring();
+});
+
+
+
 
 init();
 
