@@ -5,7 +5,7 @@
 
 **Tired of waiting for access to GPT-4 API?!! Here’s the solution!**
 
-ChatGPT-Bridge is an experimental plugin for web browsers (compatible with Microsft Edge and Google Chrome) designed to seamlessly integrate ChatGPT with third-party software. It achieves this by intercepting ChatGPT messages, transmitting them over a WebSocket, receiving the response from the third-party software, and injecting the answer back into the chat session. This process empowers ChatGPT with a vast array of applications and unlocks its full potential.
+ChatGPT-Bridge is a plugin for web browsers (compatible with Microsft Edge and Google Chrome) designed to seamlessly integrate ChatGPT with third-party software. It achieves this by intercepting ChatGPT messages, transmitting them over a WebSocket, receiving the response from the third-party software, and injecting the answer back into the chat session. This process empowers ChatGPT with a vast array of applications and unlocks its full potential.
 
 This plugin provides API-like access to GPT-3.5 and GPT-4 without the need for a long waiting period. ChatGPT-Bridge offers free access to GPT-3.5 AI, while using it with GPT-4 requires a ChatGPT Plus account but incurs no additional fees.
 

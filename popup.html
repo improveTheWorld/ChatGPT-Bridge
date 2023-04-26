@@ -1,60 +1,111 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="UTF-8">
+<html lang="en">
+<head>
+<meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.0/css/all.min.css">
+    <title>ChatGPT Bridge Plugin</title>
     <style>
-      /* Stylish and modern styles for the popup */
-      body {
-        width: 300px;
-        margin: 0;
-        padding: 10px;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        font-size: 14px;
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+    body {
+        font-family: Arial, sans-serif;
         background-color: #f5f5f5;
-        color: #333;
-      }
-      h1 {
-        font-size: 24px;
-        font-weight: 600;
-        margin-bottom: 15px;
-      }
-      button {
-        background-color: #0078d7;
-        border: none;
-        border-radius: 3px;
-        color: #fff;
-        cursor: pointer;
-        font-size: 14px;
-        margin: 5px;
-        padding: 10px;
-        transition: background-color 0.3s;
-      }
-      button:hover {
-        background-color: #005a9e;
-      }
-      h2 {
-        font-size: 18px;
-        font-weight: 600;
+    }
+
+    .container {
+        width: 500px;
+        height: 300px
+        margin: 50px auto;
+        padding: 20px;
+        background-color: #fff;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+    }
+
+    .header {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .header h1 {
+        font-size: 2.2rem;
         margin-bottom: 10px;
-      }
-      pre {
-        background-color: #ffffff;
-        border: 1px solid #ccc;
-        border-radius: 3px;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-        margin: 0;
-        padding: 10px;
-        overflow: auto;
-      }
-    </style>
-  </head>
-  <body>
-    <h1><i class="fas fa-comments"></i> ChatGPT Bridge</h1>
-    <button id="startButton" disabled><i class="fas fa-play"></i> Connecting...</button>
-    <h2><i class="fas fa-clipboard-list"></i> Logs</h2>
-    <pre id="log"></pre>
-    <!-- <script src="popup.js"></script> -->
-  </body>
+    }
+
+    .header h2 {
+        font-size: 1.2rem;
+        font-weight: 300;
+        color: #888;
+    }
+
+    .content {
+        text-align: center;
+        line-height: 1.5;
+    }
+
+    .content p {
+        margin-bottom: 15px;
+    }
+
+    .button {
+        display: inline-block;
+        background-color: #007bff;
+        color: #fff;
+        text-decoration: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        font-size: 1rem;
+        margin-bottom: 15px;
+    }
+
+    .footer {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    .footer span {
+        font-size: 0.8rem;
+        color: #666;
+    }
+
+    .footer a {
+        color: #007bff;
+        text-decoration: none;
+    }
+
+    .footer a:hover {
+        text-decoration: underline;
+    }
+</style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>ChatGPT Bridge <i class="fas fa-link "></i></h1>
+            <h2>Version 1.0.0 - Released April 26, 2023</h2>
+        </div>
+        <div class="content">
+            <p>
+                The ChatGPT Bridge Plugin allows users to access and execute Windows commands through ChatGPT. This plugin seamlessly communicates with a third party software <a href="#" class="href">ChatGPT-Command-Executer</a> that runs commands locally and provides real-time output, allowing ChatGPT to accomplish tasks on your behalf. If not yet installed :
+            </p>
+            <p><a href="#" class="href">Get the ChatGPT-Command-Executer Now</a></p>
+            <p>
+                Experience a new level of convenience and productivity with ChatGPT. Bridge the gap between AI and your computer to get more done, faster than ever before.
+            </p>
+
+            <br><a href="#" class="href">Check for Updates</a></br>
+            <p>
+                Need assistance or have a suggestion? Get in touch with the plugin developer by joining our <a href="#">Community Forum</a> or send a direct message through <a href="#">Twitter</a>.
+            </p>
+        </div>
+        <div class="footer">
+            <span>&copy; 2023 ChatGPT Bridge Plugin. All Rights Reserved. | <a href="#">Privacy Policy</a> | <a href="Terms of Service.html">Terms of Service</a></span>
+        </div>
+    </div>
+</body>
 </html>

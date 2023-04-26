@@ -157,6 +157,13 @@ function startMonitoring( ) {
         }
 
         monitoringChat = true;
+
+        //reset message reading variables
+        completeMessage = '';
+        previousMessage = '';
+        previousMessageTimestamp = 0;
+
+        //Start Monitoring
         mostRecentMessagePollingIntervalId = setInterval(checkForNewCommands, config.pollingFrequency);   
     }
 }
