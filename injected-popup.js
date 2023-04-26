@@ -74,4 +74,31 @@
     link.rel = 'stylesheet';
     link.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.0/css/all.min.css';
     document.head.appendChild(link);
+    
+////////////////////////////////////////////// Drag and drop popup management //////////////////////
+    var popupContainer = document.getElementById('popup-container');
+    popupContainer.addEventListener('mousedown', dragStart);
+
+    var offsetX, offsetY;
+
+    function dragStart(e) {
+      e.preventDefault();
+      offsetX = e.clientX - popupContainer.offsetLeft;
+      offsetY = e.clientY - popupContainer.offsetTop;
+      document.addEventListener('mousemove', drag);
+      document.addEventListener('mouseup', dragEnd);
+    }
+
+    function drag(e) {
+      e.preventDefault();
+      popupContainer.style.left = (e.clientX - offsetX) + 'px';
+      popupContainer.style.top = (e.clientY - offsetY) + 'px';
+    }
+
+    function dragEnd(e) {
+      e.preventDefault();
+      document.removeEventListener('mousemove', drag);
+      document.removeEventListener('mouseup', dragEnd);
+    }
+
 })();
