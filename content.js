@@ -31,6 +31,7 @@ let mostRecentMessagePollingIntervalId = null;
 let config = null;
 let connectionStatusValue = 'disconnected';
 let ws = null
+let firstPrompt = null;
 
 function checkForNewCommands() {
     if (!config) return;
@@ -114,20 +115,6 @@ function notifyConnectionStatus() {
     emitEvent(connectionStatusValue);
 }
 
-
-// function notifyConnectionStatus() {
-
-// chrome.runtime.sendMessage({ connectionStatus: connectionStatusValue }, (response) => {
-// if (chrome.runtime.lastError) {
-// console.log('Error sending message:', chrome.runtime.lastError);                
-// }
-// else
-// {
-// console.log("response");                
-// }
-// });
-// }
-
 function startWebSocket() {
 
     ws = new WebSocket(`ws://127.0.0.1:${config.communicationPort}`);
@@ -161,8 +148,14 @@ function startWebSocket() {
     });
 }
 
-function startMonitoring() {
+function startMonitoring( ) {
     if (!monitoringChat) {
+
+        //If new chat session, start by send the configuration prompt
+        if (!document.querySelector('div.group:nth-last-child(2) div.markdown.prose')) {
+            sendFeedBack(firstPrompt);
+        }
+
         monitoringChat = true;
         mostRecentMessagePollingIntervalId = setInterval(checkForNewCommands, config.pollingFrequency);   
     }
@@ -181,8 +174,20 @@ async function loadConfig() {
         config = await response.json();
     } catch (error) {
         console.error('Error loading config:', error);
+        
     }
 }
+
+async function loadfirstPrompt() {
+    try {
+        const response = await fetch(chrome.runtime.getURL('firstPrompt.txt'));
+        firstPrompt = await response.text();
+    } catch (error) {
+        console.error('Error loading firstPrompt:', error);
+
+    }
+}
+
 
 
 
@@ -195,7 +200,7 @@ function injectPopup() {
     const popupHtml = `
     <div id="popup-container" style="position: fixed; top: 0px; right: 10px; z-index: 9999; background-color: #f5f5f5; padding: 10px; border-radius: 5px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2); width: 130px;">
         <h2 id="topIcon"><i class="fas fa-chain-broken "></i> Bridge</h2>
-        <button id="startButton" disabled><i class="fas fa-play"></i></button>
+        <button id="startButton" disabled><i class="fas fa-play"></i></button>        
     </div>`;
 
     const parser = new DOMParser();
@@ -213,6 +218,7 @@ function injectPopup() {
 
 async function init() {
     await loadConfig();
+    await loadfirstPrompt()
     injectPopup();
     startWebSocket();
     setInterval(notifyConnectionStatus, config.reconnectInterval);
@@ -223,7 +229,8 @@ async function init() {
 
 window.addEventListener('startMonitoring', () => {
     startMonitoring();
-});
+});       
+
 
 window.addEventListener('stopMonitoring', () => {
     stopMonitoring();
