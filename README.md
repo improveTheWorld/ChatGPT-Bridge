@@ -66,6 +66,7 @@ Follow the instructions in the [Getting Started](https://github.com/improveTheWo
 2. The bridge popup will be displayed at the top right corner of the webpage. You may move it using your mouse if needed.
 
 * If the displayed popup is as below :
+
      ![Connecting.GIF](./Images/Usage/Connecting.GIF)
 
      ```
@@ -96,6 +97,7 @@ Follow the instructions in the [Getting Started](https://github.com/improveTheWo
 
 
  * When you are done, and want to stop using the bridge, just click the stop button :
+ 
    ![Stop.GIF](./Images/Usage/Stop.GIF)
 
 
