@@ -89,7 +89,7 @@ Follow the instructions in the [Getting Started](https://github.com/improveTheWo
    Once ChatGPT get all the initil instruction, it will ask you tou for his first task. Assign him one and watch the magic working.
      ```
    
-   As example of use, we asked chatgpt to troobleshoot our Wifi card. We had a issue that the windows network diagnostic tools was enable to detect. ChatGPT after tring different aproachs, using our chatGPT-Bridge system, was able to fix it for us. 
+   As example of use, we asked chatgpt to troobleshoot our Wifi card. We had a issue that the windows network diagnostic tools was unable to detect. ChatGPT after tring different aproachs, using our chatGPT-Bridge system, was able to fix it for us. 
    
 
      ---
