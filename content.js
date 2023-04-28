@@ -1,8 +1,8 @@
 // # File: content.js
-// # Software: ChatGPT Bridge
+// # Software: ChatGPT-Bridge
 // # Purpose: Provide third-party software with the capability to utilize ChatGPT.
 // #
-// # Copyright 2023 B.GATRI
+// # Copyright 2023 Tec-Net
 // #
 // # Dual License Notice
 // #

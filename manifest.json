@@ -25,7 +25,7 @@
   },
     "web_accessible_resources": [
     {
-      "resources": [ "config.json", "injected-popup.js", "firstPrompt.txt", "Terms of Service.html" ],
+      "resources": [ "config.json", "injected-popup.js", "firstPrompt.txt", "Terms of Service.html","Privacy Policy.html"],
       "matches": [ "https://chat.openai.com/*" ]
     }
   ]
