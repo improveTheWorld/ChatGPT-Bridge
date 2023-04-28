@@ -6,7 +6,7 @@
   "action": {
     "default_popup": "popup.html",
     "default_icon": {
-      "48": "icon48.png"
+      "48": "logo.png"
     }
   },
   "background": {
@@ -21,7 +21,7 @@
   ],
   "host_permissions": ["https://chat.openai.com/*"],
   "icons": {
-    "48": "icon48.png"
+    "48": "logo.png"
   },
     "web_accessible_resources": [
     {

@@ -1,25 +1,55 @@
+
+
+
+
 # ChatGPT-Bridge
 
-![ChatGPT-Bridge Logo](./icon48.png)
+![ChatGPT-Bridge Logo](./logo48.png)
 
 
-**Tired of waiting for access to GPT-4 API?!! Here’s the solution!**
+Tired of waiting for access to the GPT-4 API? Frustrated by the fees charged for using the GPT-API? We have the perfect solution for you!
+-------------------------------------------
+Introducing **ChatGPT-Driver**, a system comprised of two components: **ChatGPT-Bridge** (referred to as **"Bridge"**) and **[ChatGPT-Executor](https://github.com/improveTheWorld/ChatGPT-Executor)**  (referred to as **"Executor"**). 
+**Bridge** is a web browser plugin compatible with Microsoft Edge and Google Chrome. It offers API-like access to **ChatGPT**. When combined with **Executor** ( which  is a server application that receives and executes Windows commands), they unlock the full potential of ChatGPT without any waiting list or additional fees.
 
-ChatGPT-Bridge is a plugin for web browsers (compatible with Microsft Edge and Google Chrome) designed to seamlessly integrate ChatGPT with third-party software. It achieves this by intercepting ChatGPT messages, transmitting them over a WebSocket, receiving the response from the third-party software, and injecting the answer back into the chat session. This process empowers ChatGPT with a vast array of applications and unlocks its full potential.
+**Bridge** offers API-like access to GPT-3.5 and GPT-4 for third-party softwares via webSockets. 
+Bridge provides free API-like access to GPT-3.5. It Also provides free API-like access to GPT-4 if you have a ChatGPT Plus account. 
+ **✨ 🎉🌟  No fees are charged for the use of the API-like access !**
 
-This plugin provides API-like access to GPT-3.5 and GPT-4 without the need for a long waiting period. ChatGPT-Bridge offers free access to GPT-3.5 AI, while using it with GPT-4 requires a ChatGPT Plus account but incurs no additional fees.
+To fully benefit from ChatGPT-Driver, install and set up both components
 
-This plugin is part of an upcoming project, which gives ChatGPT access to the Windows prompt to execute commands necessary for completing tasks assigned to it by the user, thus unlocking unlimited capabilities of ChatGPT - **stay tuned!**
 
-**Note:** Since ChatGPT-Bridge is still in the experimental stage, there may be potential bugs and limitations. We appreciate your understanding and welcome any feedback to help us improve the plugin.
+
+## 🎉 What's New in Version 1.0.0
+
+-   Upgraded from an experimental version to a stable release (v1.0.0)
+-   Improved performance and compatibility with Executor
+-   Streamlined setup and usage with clearer instructions
+-   Release of  [Executor repository](https://github.com/improveTheWorld/ChatGPT-Executor.git) and source code.
+-   Improved graphical design and match more..
+
+**Note:** While ChatGPT-Driver has been significantly improved and tested, there may still be potential bugs and limitations. We appreciate your understanding and welcome any feedback to help us enhance the system.
 
 ## 🌟 Features
 
-- Seamlessly connects ChatGPT with third-party software
-- Utilizes WebSocket for real-time communication
-- Supports both GPT-3.5 and GPT-4
-- Free API-like access to GPT-3.5 and GPT-4 with a ChatGPT Plus account
-- Paves the way for future integrations with local Windows prompt
+-   🔗 Seamlessly connects ChatGPT with third-party software
+-   🌐 Utilizes WebSocket for real-time communication
+-   🤖 Supports both GPT-3.5 and GPT-4
+-   🆓 Free API-like access to GPT-3.5 and GPT-4 with a ChatGPT Plus account
+-   📚 Enable ChatGPT to read large files that exceed the size of a single prompt
+
+## 🔧 Installation and Usage
+
+To utilize ChatGPT-Driver, you'll need to install both the ChatGPT-Bridge plugin and the ChatGPT-Executor server application.
+
+### ChatGPT-Bridge
+
+Follow the instructions in the [Getting Started](https://github.com/improveTheWorld/ChatGPT-Bridge#getting-started) section to install the ChatGPT-Bridge plugin.
+
+### ChatGPT-Executor
+
+1.  Visit the ChatGPT-Executor [GitHub Repository](https://github.com/improveTheWorld/ChatGPT-Executor) and follow the installation instructions.
+2.  Set up the ChatGPT-Executor server application according to the provided documentation.
 
 ## 🚀 Getting Started
 
@@ -84,7 +114,7 @@ If you have any questions or suggestions, please feel free to reach out to us:
 ## 🎉 Acknowledgments
 
 - [OpenAI](https://www.openai.com/) for the [ChatGPT](https://chat.openai.com/chat) website
-- [Microsoft Edge](https://www.microsoft.com/en-us/edge) for providing the browser platform
+- [Google](https://www.google.com/chrome/)  and [Microsoft ](https://www.microsoft.com/en-us/edge) for providing the browser platform
 - All contributors who have helped improve ChatGPT-Bridge
 - The amazing open-source community for their invaluable resources and inspiration
 - Our users and testers for providing essential feedback that helps us improve ChatGPT-Bridge
