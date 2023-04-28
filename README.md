@@ -95,16 +95,16 @@ Follow the instructions in the [Getting Started](https://github.com/improveTheWo
     ![Stop.GIF](./Images/Usage/Stop.GIF)
     
 
-1.  The default WebSocket communication between the Bridge and the third-party software is done over port 8181. You can change the port in the config.json file if needed.
+3.  The default WebSocket communication between the Bridge and the third-party software is done over port 8181. You can change the port in the config.json file if needed.
     
-2.  You can find the initial prompt text in the file firstPrompt.txt. You may customize it for your personal needs if you want.
+4.  You can find the initial prompt text in the file firstPrompt.txt. You may customize it for your personal needs if you want.
     
-3.  Two modes of communication are available:
+5.  Two modes of communication are available:
     
     *   Wait for a complete GPT message before sending it to the third-party software (default mode).
     *   Stream the message while it's being received from GPT (enable this by setting "streamingMode": true in the config.json file).
 
-4.  If you want to use only the Bridge plugin with your third-party software, your software should act as a server and listen on the correct port for a connection. Once the plugin is installed and launched, it will automatically request a connection.
+6.  If you want to use only the Bridge plugin with your third-party software, your software should act as a server and listen on the correct port for a connection. Once the plugin is installed and launched, it will automatically request a connection.
 
 <!-- Documentation
 -------------
