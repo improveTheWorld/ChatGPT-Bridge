@@ -1,7 +1,7 @@
 # ![ChatGPT-Bridge Logo](./Images/Logo/logo.png) **ChatGPT-Bridge**
 
-Tired of waiting for access to the GPT-4 API? Frustrated by the fees charged for using the GPT-API? We have the perfect solution for you!
------------------------------------------------------------------------------------------------------------------------------------------
+# Tired of waiting for access to the GPT-4 API? Frustrated by the fees charged for using the GPT-API? We have the perfect solution for you!
+
 
 Introducing **ChatGPT-Driver**, a system comprised of two components: **ChatGPT-Bridge** (referred to as **"Bridge"**) and **[ChatGPT-Executor](https://github.com/improveTheWorld/ChatGPT-Executor)**  (referred to as **"Executor"**).
 **Bridge** is a web browser plugin compatible with Microsoft Edge and Google Chrome. It offers API-like access to **ChatGPT**. When combined with **Executor** (a server application that receives and executes Windows commands), they unlock the full potential of ChatGPT without any waiting list or additional fees.
