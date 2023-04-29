@@ -33,6 +33,9 @@ let connectionStatusValue = 'disconnected';
 let ws = null
 let firstPrompt = null;
 
+const textarea = document.querySelector('textarea.w-full');
+const sendButton = document.querySelector('textarea.w-full').closest('div').querySelector('button');
+
 function checkForNewCommands() {
     if (!config) return;
 
@@ -61,10 +64,16 @@ function checkForNewCommands() {
     }
 }
 
+function adjustTextAreaHeight()
+{
+     // Adjust the textarea height based on the content length
+     const rows = Math.ceil((textarea.value.length) / 88);
+     const height = rows * 24;
+     textarea.style.height = height + 'px';
+}
+
 function sendFeedBack(message) {
     // Find the textarea and send button
-    const textarea = document.querySelector('textarea.w-full');
-    const sendButton = document.querySelector('textarea.w-full').closest('div').querySelector('button');
 
     if (!textarea || !sendButton) {
         console.error('Unable to find textarea or send button.');
@@ -73,29 +82,16 @@ function sendFeedBack(message) {
 
     // Focus on the textarea
     textarea.focus();
-
-    // Add the message to the textarea
-    const existingText = textarea.value;
-    if (!existingText) {
-        textarea.value = message;
-    } else {
-        textarea.value = existingText + ' ' + message;
-    }
-
-    // Adjust the textarea height based on the content length
-    const rows = Math.ceil((existingText.length + message.length) / 88);
-    const height = rows * 24;
-    textarea.style.height = height + 'px';
-
+    textarea.value = message;
+    
+    adjustTextAreaHeight();
+    
     // Enable the send button if it's disabled
     if (sendButton.hasAttribute('disabled')) {
         sendButton.removeAttribute('disabled');
     }
 
-    // Click the send button after a delay
-    setTimeout(() => {
-        sendButton.click();
-    }, config.feedbackDelay);
+    sendButton.click();
 
     //reset message reading variables
     completeMessage = '';
