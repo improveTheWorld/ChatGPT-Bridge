@@ -28,11 +28,13 @@ let previousMessage = '';
 let previousMessageTimestamp = 0;
 let monitoringChat = false;
 let mostRecentMessagePollingIntervalId = null;
+let reconnectionPollIntervalId= null;
+let connectionStatusNotificationIntervalId = null;
 let config = null;
-let connectionStatusValue = 'disconnected';
+let connectionStatusValue = 'connecting';
 let ws = null
 let firstPrompt = null;
-
+ 
 const textarea = document.querySelector('textarea.w-full');
 const sendButton = document.querySelector('textarea.w-full').closest('div').querySelector('button');
 
@@ -111,37 +113,45 @@ function notifyConnectionStatus() {
     emitEvent(connectionStatusValue);
 }
 
-function startWebSocket() {
+function connectWebSocket() {
 
-    ws = new WebSocket(`ws://127.0.0.1:${config.communicationPort}`);
+   if(connectionStatusValue != 'disconnected')
+   {
+        ws = new WebSocket(`ws://127.0.0.1:${config.communicationPort}`);
 
-    ws.addEventListener('message', (event) => {
-        const output = event.data;
-        sendFeedBack(output);
-    });
+        ws.addEventListener('message', (event) => {
+            const output = event.data;
+            sendFeedBack(output);
+        });
 
 
-    ws.addEventListener('open', (event) => {
-        console.log('WebSocket connection opened:', event);
-        connectionStatusValue = 'connected';
-    });
+        ws.addEventListener('open', (event) => {
+            console.log('WebSocket connection opened:', event);
+            if(connectionStatusValue != 'disconnected'){
+                connectionStatusValue = 'connected';
+            }
+        });
 
-    ws.addEventListener('error', (event) => {
-        console.log('WebSocket error:', event);
-        connectionStatusValue = 'disconnected';
-        setTimeout(() => {
-            startWebSocket();
-        }, config.reconnectInterval);
-    });
+        ws.addEventListener('error', (event) => {
+            console.log('WebSocket error:', event);
+            if(connectionStatusValue != 'disconnected'){
+                connectionStatusValue = 'connecting';
+                setTimeout(() => {
+                    connectWebSocket();
+                }, config.reconnectInterval);
+        }
+        });
 
-    ws.addEventListener('close', (event) => {
-        console.log('WebSocket connection closed:', event);
-        connectionStatusValue = 'disconnected';
-
-        setTimeout(() => {
-            startWebSocket();
-        }, config.reconnectInterval);
-    });
+        ws.addEventListener('close', (event) => {
+            console.log('WebSocket connection closed:', event); 
+            if(connectionStatusValue != 'disconnected'){
+                connectionStatusValue = 'connecting';
+                setTimeout(() => {
+                    connectWebSocket();
+                }, config.reconnectInterval);
+            }
+        });
+   }
 }
 
 function startMonitoring( ) {
@@ -192,7 +202,21 @@ async function loadfirstPrompt() {
 }
 
 
+function disconnectServer()
+{
+    clearInterval(connectionStatusNotificationIntervalId);
+    connectionStatusValue = 'disconnected';
+    if (ws && (ws.readyState !== WebSocket.CLOSED) && (ws.readyState !== WebSocket.CLOSING) ){
+        ws.close();
+    }
+}
 
+function connectToServer()
+{
+    connectionStatusValue = 'connecting';
+    connectWebSocket();
+    connectionStatusNotificationIntervalId = setInterval(notifyConnectionStatus, config.reconnectInterval);
+}
 
 function emitEvent(name, detail = null) {
     const event = new CustomEvent(name, { detail });
@@ -203,7 +227,7 @@ function injectPopup() {
     const popupHtml = `
     <div id="popup-container" style="position: fixed; top: 0px; right: 10px; z-index: 9999; background-color: #f5f5f5; padding: 10px; border-radius: 5px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2); width: 130px;">
         <h2 id="topIcon"><i class="fas fa-chain-broken "></i> Bridge</h2>
-        <button id="startButton" disabled><i class="fas fa-play"></i></button>        
+        <button id="startButton" ><i class="fas fa-play"></i></button>        
     </div>`;
 
     const parser = new DOMParser();
@@ -215,17 +239,17 @@ function injectPopup() {
     script.src = chrome.runtime.getURL('injected-popup.js');
     (document.head || document.documentElement).appendChild(script);
 
-    //setupButtonListeners();
-
 }
 
 async function init() {
     await loadConfig();
     await loadfirstPrompt()
     injectPopup();
-    startWebSocket();
-    setInterval(notifyConnectionStatus, config.reconnectInterval);
+    connectToServer();
+  
 }
+/////////////////////////  Server connection Management   ///////////////////////////
+
 
 
 /////////////////////////  Main Program  ///////////////////////////
@@ -239,6 +263,13 @@ window.addEventListener('stopMonitoring', () => {
     stopMonitoring();
 });
 
+window.addEventListener('disconnect', () => {
+    disconnectServer();
+});
+
+window.addEventListener('connect', () => {
+    connectToServer();
+});
 
 
 

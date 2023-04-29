@@ -26,7 +26,7 @@
   const startStopButton = document.querySelector('#startButton');
   //const logElement = document.querySelector('#log');
   let monitoring = false;
-  let connectionStatus = 'disconnected';
+  let connectionStatus = 'connecting';
 
   function logMessage(message) {
       //logElement.textContent += message + '\n';

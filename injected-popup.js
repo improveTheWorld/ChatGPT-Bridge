@@ -25,13 +25,13 @@
 
 (async () => {
 
-    //let connectionStatus = 'disconnected';
+    //let connectionStatus = 'connecting';
     const startStopButton = document.querySelector('#startButton');
     const topIcon = document.querySelector('#topIcon');
     
     //const logElement = document.querySelector('#log');
     let monitoring = false;
-    let connectionStatus = 'disconnected'; 
+    let connectionStatus = 'connecting'; 
 
 
     function logMessage(message) {
@@ -47,11 +47,15 @@
             } else {
                 startStopButton.innerHTML = '<i class="fas fa-play"></i> Start';
             }
-            startStopButton.disabled = false;
-        } else {
+            //startStopButton.disabled = false;
+        } else if (connectionStatus === 'connecting') {
             topIcon.innerHTML = '<i id="topIcon" class="fas fa-chain-broken "></i> Bridge';
             startStopButton.innerHTML = '<i class="fa fa-spinner fa-spin fa-fw"></i>';
-            startStopButton.disabled = true;
+            //startStopButton.disabled = true;
+        } else if (connectionStatus === 'disconnected')
+        {
+            topIcon.innerHTML = '<i id="topIcon" class="fas fa-chain-broken "></i> Bridge';
+            startStopButton.innerHTML = '<i class="fa fa-toggle-on" aria-hidden="true"></i>';
         }
     }
 
@@ -71,21 +75,39 @@
 
     ////////////////////////////////////// Main  ///////////////////////////////////
 
-    window.addEventListener('disconnected', () => {
-        onNewConnexionStatus('disconnected');
+    window.addEventListener('connecting', () => {
+        onNewConnexionStatus('connecting');
     });
     window.addEventListener('connected', () => {
         onNewConnexionStatus('connected');
     });
+    window.addEventListener('disconnected', () => {
+        onNewConnexionStatus('disconnected');
+    });
 
     startStopButton.addEventListener('click', () => {
         monitoring = !monitoring;
-        if (monitoring) {
-            emitEvent('startMonitoring');
+        if(connectionStatus === 'connected' )
+        {
+            if (monitoring) {
+                emitEvent('startMonitoring');
+            }
+            else {
+                emitEvent('stopMonitoring');
+            }
         }
-        else {
-            emitEvent('stopMonitoring');
+        else{
+            if(connectionStatus === 'connecting')
+            {
+                connectionStatus = 'disconnected';
+                emitEvent('disconnect');
+            }
+            else{ //disconnected
+                connectionStatus ='connecting';
+                emitEvent('connect')
+            }
         }
+        
         updateButtonState();
     });
 
