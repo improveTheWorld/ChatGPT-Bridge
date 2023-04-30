@@ -206,7 +206,9 @@ async function loadTimestamps() {
         const storedTimestamps = await getStoredTimestamps();
 
         if (storedTimestamps) {
+ 
             timestamps = storedTimestamps;
+
         }
     } catch (error) {
         console.error('Error loading timestamps:', error);
@@ -261,11 +263,11 @@ function emitEvent(name, detail = null) {
 function injectPopup() {
 
     const popupHtml = `
-    <div id="popup-container" style="position: fixed; top: 0px; right: 10px; z-index: 9999; background-color: #f5f5f5; padding: 10px; border-radius: 5px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2); width: 130px;">
+    <div id="popup-container" style="position: fixed; top: 0px; right: 10px; z-index: 9999; background-color: #f5f5f5; padding: 10px; border-radius: 5px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2); width: 140px;">
     <h2 id="topIcon"><i class="fas fa-chain-broken "></i> Bridge</h2>
         <div style="display: flex; align-items: center;">
-            <button id="startButton" style="margin-right: 30px;><i class="fas fa-play"></i></button>
-            <h2 id="countDown" "></h2>
+            <button id="startButton" style="margin-right: 5px;><i class="fas fa-play"></i></button>
+            <h2 id="countDown" style="margin-right: 5px;margin-left: 5px;"></h2><small style="font-size: 9px;">+1 in <small><small id="timerCountDown" style="font-size: 13px;">2h:6min<small>
         </div>
     </div>`;
 
@@ -294,8 +296,15 @@ async function updateAndNotifyAllowedMessages(addNewStamps) {
     if ( await updatePendingMessagesCredit(addNewStamps))
     {
         saveTimestamps(timestamps);
-        
-        emitEvent('newCountDown', { 'countDown': MAX_ALLOWED_MESSAGES_CREDIT - timestamps.length });
+
+        timeCountDown = -1;
+
+        if(timestamps.length > 0)
+        {
+            const now = new Date().getTime();
+            timeCountDown = timeLimit - (now - timestamps[0])+ 1000;
+        }
+        emitEvent('newCountDown', { 'countDown': MAX_ALLOWED_MESSAGES_CREDIT - timestamps.length,'timerCounDown': timeCountDown  });
     }
 }
 
@@ -311,6 +320,7 @@ async function updatePendingMessagesCredit(addNewStamps) {
         timestampsChanged = true;
     }
 
+   
     // Remove debited message
     while (timestamps.length > 0 && (now - timestamps[0]) > timeLimit) {
         
@@ -418,8 +428,6 @@ function isGPT4()
 }
 
 
-
-
 // Helper function to check if an element or any of its ancestors matches the condition
 function isSendButton(element) {
     while (element) {
@@ -524,12 +532,13 @@ async function init() {
     mostRecentMessagePollingIntervalId = setInterval(checkForNewCommands, config.pollingFrequency);
     connectToServer();
     await loadTimestamps();
-    await updatePendingMessagesCredit(false);
+    await updateAndNotifyAllowedMessages(false);
 
     // Wait for the popup to be ready before emitting the event
         document.addEventListener('popupReady', function() {
             if(isGPT4() || timestamps.length >0) {
-                emitEvent('newCountDown', { 'countDown': MAX_ALLOWED_MESSAGES_CREDIT - timestamps.length });
+                const now = new Date().getTime();
+                emitEvent('newCountDown', { 'countDown': MAX_ALLOWED_MESSAGES_CREDIT - timestamps.length,'timerCounDown':timeLimit - ( now - timestamps[0])+ 1000 });
             }
         });
 

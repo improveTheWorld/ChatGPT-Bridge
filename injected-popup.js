@@ -23,16 +23,29 @@
 // # See the License for the specific language governing permissions and
 // # limitations under the License.
 
+
+
 (async () => {
 
-    //let connectionStatus = 'connecting';
+    /* <div id="popup-container" style="position: fixed; top: 0px; right: 10px; z-index: 9999; background-color: #f5f5f5; padding: 10px; border-radius: 5px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2); width: 130px;">
+<h2 id="topIcon"><i class="fas fa-chain-broken "></i> Bridge</h2>
+    <div style="display: flex; align-items: center;">
+        <button id="startButton" style="margin-right: 30px;><i class="fas fa-play"></i></button>
+        <h2 id="countDown" "></h2>
+    </div>
+</div> */
+
+    
     const startStopButton = document.querySelector('#startButton');
     const topIcon = document.querySelector('#topIcon');
     const countElemnet = document.querySelector('#countDown');
+    const timerCountDownElemnet =  document.querySelector('#timerCountDown'); 
+    let timerCountDownPollId;
     
     //const logElement = document.querySelector('#log');
     let monitoring = false;
     let connectionStatus = 'connecting'; 
+    let timerCounDownNum = -1;  
 
 
     function logMessage(message) {
@@ -72,6 +85,25 @@
         window.dispatchEvent(event);
     }
 
+    function formatTime(milliseconds) {
+        if(milliseconds<0)
+        {
+            return '';
+        }
+        else
+        {
+            const hours = Math.floor(milliseconds / 3600000); // 1 hour = 3600000 ms
+            const minutes = Math.floor((milliseconds % 3600000) / 60000); // 1 minute = 60000 ms
+            return `${hours}h:${minutes}min`;
+        }
+        
+      }
+      
+      function updatetimerCountDownElement()
+      {
+        timerCountDownElemnet.innerText = formatTime(timerCounDownNum);
+      }
+
     ////////////////////////////////////// Main  ///////////////////////////////////
 
     window.addEventListener('connecting', () => {
@@ -87,7 +119,22 @@
     window.addEventListener('newCountDown', (event) => {
 
         countElemnet.innerText = event.detail.countDown;
+        timerCounDownNum = event.detail.timerCounDown;
+        updatetimerCountDownElement();
+        if(timerCountDownPollId)
+        {
+            clearInterval(timerCountDownPollId);
+            
+        }
+    
+        timerCountDownPollId = setInterval(() => {
+            timerCounDownNum-= 60000;
+            updatetimerCountDownElement();
+
+        },60000);
+        
     });
+
 
     
     
