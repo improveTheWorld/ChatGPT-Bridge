@@ -34,7 +34,7 @@ let config = null;
 let connectionStatus = 'connecting';
 let ws = null
 let firstPrompt = null;
-const MAX_ALLOWED_MESSAGES_CREDIT= 25;
+;
 
 const textarea = document.querySelector('textarea.w-full');
 const sendButton = document.querySelector('textarea.w-full').closest('div').querySelector('button');
@@ -60,7 +60,7 @@ function checkForNewCommands() {
         //Streaming mode management: to test
         if (config.streamingMode) {
             const appendedMessage = currentMessage.slice(previousMessage.length).trim();
-            console.log(appendedMessage);
+            //console.log(appendedMessage);
             sendMessageToWebSocketServer(appendedMessage);
         }
 
@@ -130,14 +130,14 @@ function connectWebSocket() {
 
 
         ws.addEventListener('open', (event) => {
-            console.log('WebSocket connection opened:', event);
+            //console.log('WebSocket connection opened:', event);
             if (connectionStatus != 'disconnected') {
                 connectionStatus = 'connected';
             }
         });
 
         ws.addEventListener('error', (event) => {
-            console.log('WebSocket error:', event);
+            //console.log('WebSocket error:', event);
             if (connectionStatus != 'disconnected') {
                 connectionStatus = 'connecting';
                 setTimeout(() => {
@@ -147,7 +147,7 @@ function connectWebSocket() {
         });
 
         ws.addEventListener('close', (event) => {
-            console.log('WebSocket connection closed:', event);
+            //console.log('WebSocket connection closed:', event);
             if (connectionStatus != 'disconnected') {
                 connectionStatus = 'connecting';
                 setTimeout(() => {
@@ -283,14 +283,15 @@ function injectPopup() {
 
 
 /////////////////////////////////////// countdown management /////////////////////////
-
+const MAX_ALLOWED_MESSAGES_CREDIT= 25;
 let allowedMessagesCount = MAX_ALLOWED_MESSAGES_CREDIT;
 let timestamps = [];
-const timeLimit = 3 * 60 * 60 * 1000; // 3 hours in milliseconds
+ const timeLimit = 3 * 60 * 60 * 1000; // 3 hours in milliseconds
 
-function updateAndNotifyAllowedMessages() {
 
-    if (updatePendingMessagesCredit(true))
+async function updateAndNotifyAllowedMessages(addNewStamps) {
+
+    if ( await updatePendingMessagesCredit(addNewStamps))
     {
         saveTimestamps(timestamps);
         
@@ -298,19 +299,25 @@ function updateAndNotifyAllowedMessages() {
     }
 }
 
-function updatePendingMessagesCredit(newMessageStamps) {
+async function updatePendingMessagesCredit(addNewStamps) {
 
     const now = new Date().getTime();
     let timestampsChanged = false;
 
-    if (newMessageStamps && (timestamps.length<MAX_ALLOWED_MESSAGES_CREDIT))
+    if (addNewStamps && (timestamps.length<MAX_ALLOWED_MESSAGES_CREDIT))
     {
+        await loadTimestamps();
         timestamps.push(now);
         timestampsChanged = true;
     }
 
     // Remove debited message
     while (timestamps.length > 0 && (now - timestamps[0]) > timeLimit) {
+        
+        if(!timestampsChanged)
+        {
+            loadTimestamps();
+        }
         timestamps.shift();
         timestampsChanged = true;
     }
@@ -322,19 +329,19 @@ function updatePendingMessagesCredit(newMessageStamps) {
         const nextMessageWindow = timeLimit - (now - timestamps[0]) + 1000;
 
         setTimeout(() => {
-            updatePendingMessagesCredit(false);
-        }, nextMessageWindow + 1000);
+            updateAndNotifyAllowedMessages(false);
+        }, nextMessageWindow );
         console.log('Next check planned in :',nextMessageWindow);
     }
     return timestampsChanged;
    
 }
 
-function onFeedbackSent() {
+async function onFeedbackSent() {
 
     if ( isGPT4()) {
-        console.log('GPT 4 feedbacksent');        
-        updateAndNotifyAllowedMessages();
+        //console.log('GPT 4 feedbacksent');        
+        await updateAndNotifyAllowedMessages(true);
     }
 }
 
@@ -346,7 +353,7 @@ function sendMessageToWebSocketServer(message) {
     if (ws && ws.readyState === WebSocket.OPEN) {
         ws.send(message);
     } else {
-        console.log('WebSocket is not connected or not in the open state.');
+        //console.log('WebSocket is not connected or not in the open state.');
     }
 }
 
@@ -445,23 +452,23 @@ function isTextArea(element) {
 /////////////////////////  Main Program  ///////////////////////////
 
 window.addEventListener('startSendingFeedback', () => {
-    console.log(' content.js: startSendingFeedback received ');
+    //console.log(' content.js: startSendingFeedback received ');
     startSendingFeedback();
 });
 
 
 window.addEventListener('stopSendingFeedback', () => {
-    console.log(' content.js: stopSendingFeedback received ');
+    //console.log(' content.js: stopSendingFeedback received ');
     stopSendingFeedback();
 });
 
 window.addEventListener('disconnect', () => {
-    console.log(' content.js: disconnect received ');
+    //console.log(' content.js: disconnect received ');
     disconnectServer();
 });
 
 window.addEventListener('connect', () => {
-    console.log(' content.js: connect received ');
+    //console.log(' content.js: connect received ');
     connectToServer();
 });
 
@@ -479,7 +486,7 @@ document.addEventListener('keydown', (event) => {
                 // Check if the textarea still contains the text
                 if (event.target.value !== '') {
                     // The Enter keypress was not considered as validation, handle the false Enter case here
-                    console.log('False Enter detected');
+                    //console.log('False Enter detected');
                 } else {
                     
                     // The Enter keypress was considered as validation, continue with your onFeedbackSent() function
@@ -517,11 +524,11 @@ async function init() {
     mostRecentMessagePollingIntervalId = setInterval(checkForNewCommands, config.pollingFrequency);
     connectToServer();
     await loadTimestamps();
-    updatePendingMessagesCredit(false);
+    await updatePendingMessagesCredit(false);
 
     // Wait for the popup to be ready before emitting the event
         document.addEventListener('popupReady', function() {
-            if(isGPT4() || timestamps.length>0) {
+            if(isGPT4() || timestamps.length >0) {
                 emitEvent('newCountDown', { 'countDown': MAX_ALLOWED_MESSAGES_CREDIT - timestamps.length });
             }
         });
