@@ -15,7 +15,7 @@
 // #
 // # For Non-Free Software Projects:
 // # This software requires a commercial license. Please contact the author at
-// # bilelgatri@gmail.com to discuss licensing terms and pricing.
+// # tecnet.paris@gmail.com to discuss licensing terms and pricing.
 // #
 // # Unless required by applicable law or agreed to in writing, software
 // # distributed under the License is distributed on an "AS IS" BASIS,
@@ -28,6 +28,7 @@
     //let connectionStatus = 'connecting';
     const startStopButton = document.querySelector('#startButton');
     const topIcon = document.querySelector('#topIcon');
+    const countElemnet = document.querySelector('#countDown');
     
     //const logElement = document.querySelector('#log');
     let monitoring = false;
@@ -71,8 +72,6 @@
         window.dispatchEvent(event);
     }
 
-  
-
     ////////////////////////////////////// Main  ///////////////////////////////////
 
     window.addEventListener('connecting', () => {
@@ -85,15 +84,23 @@
         onNewConnexionStatus('disconnected');
     });
 
+    window.addEventListener('newCountDown', (event) => {
+
+        countElemnet.innerText = event.detail.countDown;
+    });
+
+    
+    
+
     startStopButton.addEventListener('click', () => {
         monitoring = !monitoring;
         if(connectionStatus === 'connected' )
         {
             if (monitoring) {
-                emitEvent('startMonitoring');
+                emitEvent('startSendingFeedback');
             }
             else {
-                emitEvent('stopMonitoring');
+                emitEvent('startSendingFeedback');
             }
         }
         else{
@@ -110,7 +117,6 @@
         
         updateButtonState();
     });
-
 
 
     // Initialize button state
@@ -147,5 +153,10 @@
       document.removeEventListener('mousemove', drag);
       document.removeEventListener('mouseup', dragEnd);
     }
+
+    // injected-popup.js ready
+
+    const popupReadyEvent = new CustomEvent('popupReady');
+    document.dispatchEvent(popupReadyEvent);  
 
 })();

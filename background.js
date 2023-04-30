@@ -15,7 +15,7 @@
 // #
 // # For Non-Free Software Projects:
 // # This software requires a commercial license. Please contact the author at
-// # bilelgatri@gmail.com to discuss licensing terms and pricing.
+// # tecnet.paris@gmail.com to discuss licensing terms and pricing.
 // #
 // # Unless required by applicable law or agreed to in writing, software
 // # distributed under the License is distributed on an "AS IS" BASIS,
