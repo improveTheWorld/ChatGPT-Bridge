@@ -2,7 +2,7 @@
 
 # Tired of waiting for access to the GPT-4 API? Frustrated by the fees charged for using the GPT-API? We have the perfect solution for you!
 
-Introducing **ChatGPT-Driver**, a system comprised of two components: **ChatGPT-Bridge** (referred to as **"Bridge"**) and **[ChatGPT-Executor](https://github.com/improveTheWorld/ChatGPT-Executor)**  (referred to as **"Executor"**).
+Introducing **[ChatGPT-Driver](https://youtu.be/9fCtMJQxQ4c)**, a system comprised of two components: **ChatGPT-Bridge** (referred to as **"Bridge"**) and **[ChatGPT-Executor](https://github.com/improveTheWorld/ChatGPT-Executor)**  (referred to as **"Executor"**).
 **Bridge** is a web browser plugin compatible with Microsoft Edge and Google Chrome. It offers API-like access to **ChatGPT**. When combined with **Executor** (a server application that receives and executes Windows commands), they unlock the full potential of ChatGPT without any waiting list or additional fees.
 
 **Bridge** offers API-like access to GPT-3.5 and GPT-4 for third-party software via webSockets.
@@ -79,7 +79,7 @@ Follow the instructions in the [Getting Started](https://github.com/improveTheWo
 
   Once ChatGPT gets all the initial instructions, it will ask you for its first task. Assign one and watch the magic work.
 
-  `As an example of use, we asked ChatGPT to troubleshoot our WiFi card. We had an issue that the Windows network diagnostic tools were unable to detect. ChatGPT, after trying different approaches using our ChatGPT-Bridge system, was able to fix it for us.`
+  `As an example of use, we asked ChatGPT to troubleshoot our WiFi card. We had an issue that the Windows network diagnostic tools were unable to detect. ChatGPT, after trying different approaches using our ChatGPT-Bridge system, was able to fix it for us.`[Video](https://youtu.be/9fCtMJQxQ4c)
 
   ---
 * When you are done and want to stop using the bridge, just click the stop button:
