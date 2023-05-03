@@ -34,10 +34,10 @@ let config = null;
 let connectionStatus = 'connecting';
 let ws = null
 let firstPrompt = null;
-;
+
 
 const textarea = document.querySelector('textarea.w-full');
-const sendButton = document.querySelector('textarea.w-full').closest('div').querySelector('button');
+let sendButton = null; 
 
 function getMostRecentMessage() {
     const messageElement = document.querySelector('div.group:nth-last-child(2) div.markdown.prose');
@@ -87,7 +87,7 @@ function adjustTextAreaHeight() {
 }
 
 function sendFeedBack(message) {
-
+    sendButton = document.querySelector('textarea.w-full').parentElement.parentElement.querySelector('button');
     if (!textarea || !sendButton) {
         console.error('Unable to find textarea or send button.');
         return;
@@ -263,14 +263,25 @@ function emitEvent(name, detail = null) {
 function injectPopup() {
 
     const popupHtml = `
-    <div id="popup-container" style="position: fixed; top: 0px; right: 10px; z-index: 9999; background-color: #f5f5f5; padding: 10px; border-radius: 5px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2); width: 140px;">
-    <h2 id="topIcon"><i class="fas fa-chain-broken "></i> Bridge</h2>
-        <div style="display: flex; align-items: center;">
-            <button id="startButton" style="margin-right: 5px;><i class="fas fa-play"></i></button>
-            <h2 id="countDown" style="margin-right: 5px;margin-left: 5px;"></h2><small style="font-size: 9px;">+1 in <small><small id="timerCountDown" style="font-size: 13px;">2h:6min<small>
+    <div id="popup-container" style="position: fixed; top: 0px; right: 10px; z-index: 9999; background-color: #f5f5f5; padding: 10px; border-radius: 5px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);  width: 140px;">
+        <div style="display: flex; align-items: stretch; justify-content: space-between;">
+            <div style="display: flex; flex-direction: column; justify-content: center; border: 1px solid #ccc; border-radius: 5px; padding: 5px; background-color: #e0e0e0;">
+                <h2 id="topIcon" style="margin: 0;"><i class="fas fa-chain-broken"></i> Bridge</h2>
+                <button id="startButton" style="margin-top: 5px;"><i class="fas fa-play"></i></button>
+            </div>
+            
+            <div id="countdown-container" style="display: none; flex-direction: column; justify-content: center; border: 1px solid #ccc; border-radius: 5px; padding: 5px; background-color: #e0e0e0;">
+                <div>
+                    <h2 id="countDown" style="margin-right: 5px; margin-left: 5px;  display: inline;">25</h2>
+                    <small id="countDownMessage" style="font-size: 9px;"></small>
+                </div>
+                <div>
+                    <small id="timerCountDown" style="font-size: 13px;"> 00h:0min</small>
+                </div>
+            </div>
         </div>
     </div>`;
-
+    
     const parser = new DOMParser();
     const popupDOM = parser.parseFromString(popupHtml, 'text/html');
     document.body.appendChild(popupDOM.querySelector('#popup-container'));
@@ -291,7 +302,7 @@ let timestamps = [];
  const timeLimit = 3 * 60 * 60 * 1000; // 3 hours in milliseconds
 
 
-async function updateAndNotifyAllowedMessages(addNewStamps) {
+async function updateTimestamps(addNewStamps) {
 
     if ( await updatePendingMessagesCredit(addNewStamps))
     {
@@ -339,7 +350,7 @@ async function updatePendingMessagesCredit(addNewStamps) {
         const nextMessageWindow = timeLimit - (now - timestamps[0]) + 1000;
 
         setTimeout(() => {
-            updateAndNotifyAllowedMessages(false);
+            updateTimestamps(false);
         }, nextMessageWindow );
         console.log('Next check planned in :',nextMessageWindow);
     }
@@ -351,7 +362,7 @@ async function onFeedbackSent() {
 
     if ( isGPT4()) {
         //console.log('GPT 4 feedbacksent');        
-        await updateAndNotifyAllowedMessages(true);
+        await updateTimestamps(true);
     }
 }
 
@@ -460,7 +471,7 @@ function isTextArea(element) {
 /////////////////////////  Main Program  ///////////////////////////
 
 window.addEventListener('startSendingFeedback', () => {
-    //console.log(' content.js: startSendingFeedback received ');
+    console.log(' content.js: startSendingFeedback received ');
     startSendingFeedback();
 });
 
@@ -532,7 +543,7 @@ async function init() {
     mostRecentMessagePollingIntervalId = setInterval(checkForNewCommands, config.pollingFrequency);
     connectToServer();
     await loadTimestamps();
-    await updateAndNotifyAllowedMessages(false);
+    await updateTimestamps(false);
 
     // Wait for the popup to be ready before emitting the event
         document.addEventListener('popupReady', function() {

@@ -35,17 +35,19 @@
     </div>
 </div> */
 
-    
+
     const startStopButton = document.querySelector('#startButton');
     const topIcon = document.querySelector('#topIcon');
     const countElemnet = document.querySelector('#countDown');
-    const timerCountDownElemnet =  document.querySelector('#timerCountDown'); 
+    const timerCountDownElemnet = document.querySelector('#timerCountDown');
+    const timerCountDownMessageElemnet = document.querySelector('#countDownMessage');
+
     let timerCountDownPollId;
-    
+
     //const logElement = document.querySelector('#log');
     let monitoring = false;
-    let connectionStatus = 'connecting'; 
-    let timerCounDownNum = -1;  
+    let connectionStatus = 'connecting';
+    let timerCounDownNum = -1;
 
 
     function logMessage(message) {
@@ -66,8 +68,7 @@
             topIcon.innerHTML = '<i id="topIcon" class="fas fa-chain-broken "></i> Bridge';
             startStopButton.innerHTML = '<i class="fa fa-spinner fa-spin fa-fw"></i>';
             //startStopButton.disabled = true;
-        } else if (connectionStatus === 'disconnected')
-        {
+        } else if (connectionStatus === 'disconnected') {
             topIcon.innerHTML = '<i id="topIcon" class="fas fa-chain-broken "></i> Bridge';
             startStopButton.innerHTML = '<i class="fa fa-toggle-on" aria-hidden="true"></i>';
         }
@@ -86,23 +87,43 @@
     }
 
     function formatTime(milliseconds) {
-        if(milliseconds<0)
-        {
-            return '';
+        const hours = Math.floor(milliseconds / 3600000); // 1 hour = 3600000 ms
+        const minutes = Math.floor((milliseconds % 3600000) / 60000); // 1 minute = 60000 ms
+        return `${hours}h:${minutes}min`;
+    }
+
+    function toggleCountdownContainer(visible) {
+        const countdownContainer = document.getElementById('countdown-container');
+        const popupContainer = document.getElementById('popup-container');
+
+
+        if (visible) {
+            countdownContainer.style.display = 'flex';
+            popupContainer.style.width = 215 + 'px';
+        } else {
+            countdownContainer.style.display = 'none';
+            popupContainer.style.width = 140 + 'px'; // Set the new maxWidth value
         }
-        else
-        {
-            const hours = Math.floor(milliseconds / 3600000); // 1 hour = 3600000 ms
-            const minutes = Math.floor((milliseconds % 3600000) / 60000); // 1 minute = 60000 ms
-            return `${hours}h:${minutes}min`;
+    }
+
+
+
+
+    function updatetimerCountDownElement() {
+        if (timerCounDownNum > 0) {
+
+            toggleCountdownContainer(true);
+            timerCountDownElemnet.innerText = formatTime(timerCounDownNum);
+            timerCountDownMessageElemnet.innerText = '+1 in ';
+
         }
-        
-      }
-      
-      function updatetimerCountDownElement()
-      {
-        timerCountDownElemnet.innerText = formatTime(timerCounDownNum);
-      }
+        else {
+            toggleCountdownContainer(false);
+            //timerCountDownElemnet.innerText = '';
+            //timerCountDownMessageElemnet.innerText = '';
+        }
+
+    }
 
     ////////////////////////////////////// Main  ///////////////////////////////////
 
@@ -121,28 +142,26 @@
         countElemnet.innerText = event.detail.countDown;
         timerCounDownNum = event.detail.timerCounDown;
         updatetimerCountDownElement();
-        if(timerCountDownPollId)
-        {
+        if (timerCountDownPollId) {
             clearInterval(timerCountDownPollId);
-            
+
         }
-    
+
         timerCountDownPollId = setInterval(() => {
-            timerCounDownNum-= 60000;
+            timerCounDownNum -= 60000;
             updatetimerCountDownElement();
 
-        },60000);
-        
+        }, 60000);
+
     });
 
 
-    
-    
+
+
 
     startStopButton.addEventListener('click', () => {
         monitoring = !monitoring;
-        if(connectionStatus === 'connected' )
-        {
+        if (connectionStatus === 'connected') {
             if (monitoring) {
                 emitEvent('startSendingFeedback');
             }
@@ -150,18 +169,17 @@
                 emitEvent('startSendingFeedback');
             }
         }
-        else{
-            if(connectionStatus === 'connecting')
-            {
+        else {
+            if (connectionStatus === 'connecting') {
                 connectionStatus = 'disconnected';
                 emitEvent('disconnect');
             }
-            else{ //disconnected
-                connectionStatus ='connecting';
+            else { //disconnected
+                connectionStatus = 'connecting';
                 emitEvent('connect')
             }
         }
-        
+
         updateButtonState();
     });
 
@@ -174,36 +192,48 @@
     link.rel = 'stylesheet';
     link.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.0/css/all.min.css';
     document.head.appendChild(link);
-    
-////////////////////////////////////////////// Drag and drop popup management //////////////////////
+
+    ////////////////////////////////////////////// Drag and drop popup management //////////////////////
     var popupContainer = document.getElementById('popup-container');
     popupContainer.addEventListener('mousedown', dragStart);
+
+    // Prevent the mousedown event from bubbling when clicking on the button
+    document.getElementById('startButton').addEventListener('mousedown', function (e) {
+        e.stopPropagation();
+    }, false);
+
+    // The rest of the code remains the same
+
+
+
+    // var popupContainer = document.getElementById('popup-container');
+    // popupContainer.addEventListener('mousedown', dragStart);
 
     var offsetX, offsetY;
 
     function dragStart(e) {
-      e.preventDefault();
-      offsetX = e.clientX - popupContainer.offsetLeft;
-      offsetY = e.clientY - popupContainer.offsetTop;
-      document.addEventListener('mousemove', drag);
-      document.addEventListener('mouseup', dragEnd);
+        e.preventDefault();
+        offsetX = e.clientX - popupContainer.offsetLeft;
+        offsetY = e.clientY - popupContainer.offsetTop;
+        document.addEventListener('mousemove', drag);
+        document.addEventListener('mouseup', dragEnd);
     }
 
     function drag(e) {
-      e.preventDefault();
-      popupContainer.style.left = (e.clientX - offsetX) + 'px';
-      popupContainer.style.top = (e.clientY - offsetY) + 'px';
+        e.preventDefault();
+        popupContainer.style.left = (e.clientX - offsetX) + 'px';
+        popupContainer.style.top = (e.clientY - offsetY) + 'px';
     }
 
     function dragEnd(e) {
-      e.preventDefault();
-      document.removeEventListener('mousemove', drag);
-      document.removeEventListener('mouseup', dragEnd);
+        e.preventDefault();
+        document.removeEventListener('mousemove', drag);
+        document.removeEventListener('mouseup', dragEnd);
     }
 
     // injected-popup.js ready
 
     const popupReadyEvent = new CustomEvent('popupReady');
-    document.dispatchEvent(popupReadyEvent);  
+    document.dispatchEvent(popupReadyEvent);
 
 })();
