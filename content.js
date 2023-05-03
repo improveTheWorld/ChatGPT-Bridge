@@ -119,8 +119,12 @@ function notifyConnectionStatus() {
 }
 
 function connectWebSocket() {
-
     if (connectionStatus != 'disconnected') {
+        // Check if the WebSocket is already connected before creating a new connection
+        if (ws &&(ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING) ){
+            return;
+        }
+
         ws = new WebSocket(`ws://127.0.0.1:${config.communicationPort}`);
 
         ws.addEventListener('message', (event) => {
@@ -128,16 +132,13 @@ function connectWebSocket() {
             sendFeedBack(output);
         });
 
-
         ws.addEventListener('open', (event) => {
-            //console.log('WebSocket connection opened:', event);
             if (connectionStatus != 'disconnected') {
                 connectionStatus = 'connected';
             }
         });
 
         ws.addEventListener('error', (event) => {
-            //console.log('WebSocket error:', event);
             if (connectionStatus != 'disconnected') {
                 connectionStatus = 'connecting';
                 setTimeout(() => {
@@ -147,7 +148,6 @@ function connectWebSocket() {
         });
 
         ws.addEventListener('close', (event) => {
-            //console.log('WebSocket connection closed:', event);
             if (connectionStatus != 'disconnected') {
                 connectionStatus = 'connecting';
                 setTimeout(() => {
