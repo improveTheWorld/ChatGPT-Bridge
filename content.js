@@ -114,9 +114,9 @@ function sendFeedBack(message) {
     return ;
 }
 
-function readLastSendFeedbackError()
+function isSendError()
 {
-    return document.querySelector('form.stretch div.relative > div:first-child').textContent.trim();
+    return (document.querySelector('form.stretch div.relative > div:first-child').textContent.trim() === 'There was an error generating a responseRegenerate response');
 }
 
 function notifyConnectionStatus() {
@@ -365,7 +365,7 @@ async function updatePendingMessagesCredit(addNewStamps) {
 
 async function onFeedbackSent() {
     console.log(' +++++++++++++++++++++ feedbacksent');
-    if ( readLastSendFeedbackError() == '' && isGPT4() ) {
+    if ( !isSendError() && isGPT4() ) {
         //console.log('GPT 4 feedbacksent');        
         await updateTimestamps(true);
     }
@@ -459,16 +459,8 @@ function isGPT4()
     }    
     
     const regex = new RegExp(`\\b${'GPT-4'}\\b`, 'i');
-    GPT4found = regex.test(titleElement.innerText);
-    if(GPT4found)
-    {
-        console.log('I find GPT-4 in ', titleElement.innerText)
-    }
-    else{
-        console.log('Cant to find GPT-4 in ', titleElement.innerText)
-    }
-
-    return GPT4found;
+    return regex.test(titleElement.innerText);
+   
 }
 
 
@@ -544,7 +536,7 @@ document.addEventListener('keydown', (event) => {
                     // The Enter keypress was considered as validation, continue with your onFeedbackSent() function
                     onFeedbackSent();
                 }
-            }, 100);
+            }, 2000);
         }
     }
 });
@@ -553,7 +545,9 @@ document.addEventListener('keydown', (event) => {
 document.addEventListener('click', (event) => {
     // Check if the clicked element (or any of its ancestors) matches the condition
     if (isSendButton(event.target)) {
-        onFeedbackSent();
+        setTimeout(() => {
+            onFeedbackSent();
+        }, 2000);
     }
 });
 
