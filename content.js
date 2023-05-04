@@ -536,7 +536,7 @@ document.addEventListener('keydown', (event) => {
                     // The Enter keypress was considered as validation, continue with your onFeedbackSent() function
                     onFeedbackSent();
                 }
-            }, 2000);
+            }, config.messageCompletionTime-500);
         }
     }
 });
@@ -547,7 +547,7 @@ document.addEventListener('click', (event) => {
     if (isSendButton(event.target)) {
         setTimeout(() => {
             onFeedbackSent();
-        }, 2000);
+        },config.messageCompletionTime-500);
     }
 });
 
