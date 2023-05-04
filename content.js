@@ -36,7 +36,8 @@ let ws = null
 let firstPrompt = null;
 
 
-const textarea = document.querySelector('textarea.w-full');
+let textarea = document.querySelector('div.relative.flex > textarea');
+
 let sendButton = null; 
 
 function getMostRecentMessage() {
@@ -87,7 +88,9 @@ function adjustTextAreaHeight() {
 }
 
 function sendFeedBack(message) {
-    sendButton = document.querySelector('textarea.w-full').parentElement.parentElement.querySelector('button');
+
+    textarea = document.querySelector('div.relative.flex > textarea');
+    sendButton = document.querySelector('div.relative.flex > textarea + button');
     if (!textarea || !sendButton) {
         console.error('Unable to find textarea or send button.');
         return;
@@ -107,12 +110,14 @@ function sendFeedBack(message) {
 
     sendButton.click();
 
-    //reset message reading variables
-    completeMessage = '';
-    previousMessage = '';
-    previousMessageTimestamp = 0;
+   
+    return ;
 }
 
+function readLastSendFeedbackError()
+{
+    return document.querySelector('form.stretch div.relative > div:first-child').textContent.trim();
+}
 
 function notifyConnectionStatus() {
     emitEvent(connectionStatus);
@@ -359,8 +364,8 @@ async function updatePendingMessagesCredit(addNewStamps) {
 }
 
 async function onFeedbackSent() {
-
-    if ( isGPT4()) {
+    console.log(' +++++++++++++++++++++ feedbacksent');
+    if ( readLastSendFeedbackError() == '' && isGPT4() ) {
         //console.log('GPT 4 feedbacksent');        
         await updateTimestamps(true);
     }
@@ -378,13 +383,31 @@ function sendMessageToWebSocketServer(message) {
     }
 }
 
+function isNewChatPage()
+{
+    //  true if no  answer received yet
+    let isNew = (!document.querySelector('div.group:nth-last-child(2) div.markdown.prose'))
+    if(isNew)
+    {
+        // for each new session check the status of the account
+        updateGPT_PlusAccountStatus()
+    }
+    return isNew;
+}
 function startSendingFeedback() {
     if (!sendingFeedback) {
         sendingFeedback = true;
 
         //If new chat session, start by send the configuration prompt
-        if (!document.querySelector('div.group:nth-last-child(2) div.markdown.prose')) {
+        if (isNewChatPage()) {
+
             sendFeedBack(firstPrompt);
+        }
+        else{
+             //reset message reading variables
+            completeMessage = '';
+            previousMessage = '';
+            previousMessageTimestamp = 0;
         }
 
     }
@@ -393,6 +416,7 @@ function startSendingFeedback() {
 function stopSendingFeedback() {
     if (sendingFeedback) {
         sendingFeedback = false;
+        previousMessage =''
     }
 }
 
@@ -411,6 +435,15 @@ function connectToServer() {
     connectionStatus = 'connecting';
     connectWebSocket();
     connectionStatusNotificationIntervalId = setInterval(notifyConnectionStatus, config.reconnectInterval);
+}
+
+let isChatGPT_PlusAccount = false
+function updateGPT_PlusAccountStatus()
+{
+    if(document.querySelector('span.bg-yellow-200.text-yellow-900.py-0\\.5.px-1\\.5.text-xs.md\\:text-sm.rounded-md.uppercase'))
+    {
+        isChatGPT_PlusAccount = true;
+    }
 }
 
 function isGPT4()
@@ -547,7 +580,7 @@ async function init() {
 
     // Wait for the popup to be ready before emitting the event
         document.addEventListener('popupReady', function() {
-            if(isGPT4() || timestamps.length >0) {
+            if( isGPT4() || timestamps.length >0) {
                 const now = new Date().getTime();
                 emitEvent('newCountDown', { 'countDown': MAX_ALLOWED_MESSAGES_CREDIT - timestamps.length,'timerCounDown':timeLimit - ( now - timestamps[0])+ 1000 });
             }

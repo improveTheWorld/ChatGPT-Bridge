@@ -166,7 +166,7 @@
                 emitEvent('startSendingFeedback');
             }
             else {
-                emitEvent('startSendingFeedback');
+                emitEvent('stopSendingFeedback');
             }
         }
         else {
