@@ -2,12 +2,12 @@
 // # Software: ChatGPT-Bridge
 // # Purpose: Provide third-party software with the capability to utilize ChatGPT.
 // #
-// # Copyright@ 2023 Tec-Net
+// # Copyright © 2023 Tec-Net
 // #
 // # Dual License Notice
 // #
 // # For Free Software Projects:
-// # This software is licensed under the Apache License, Version 2.0 (the "License");
+// # This software is licensed under the Apache License, Version 2.0;
 // # you may not use this file except in compliance with the License.
 // # You may obtain a copy of the License at
 // #
@@ -23,7 +23,7 @@
 // # See the License for the specific language governing permissions and
 // # limitations under the License.
 
-let completeMessage = '';
+let lastSentMessage = '';
 let previousMessage = '';
 let previousMessageTimestamp = 0;
 let sendingFeedback = false;
@@ -72,10 +72,10 @@ function checkForNewCommands() {
         // if (currentMessage == previousMessage) && waiting period reached
     } else if (Date.now() - previousMessageTimestamp >= config.messageCompletionTime && !config.streamingMode) {
 
-        if (currentMessage !== completeMessage) {
-            completeMessage = currentMessage;
+        if (currentMessage !== lastSentMessage) {
+            lastSentMessage = currentMessage;
             //console.log('Most recent received message:', completeMessage);
-            sendMessageToWebSocketServer(completeMessage);
+            sendMessageToWebSocketServer(lastSentMessage);
         }
     }
 }
@@ -364,10 +364,13 @@ async function updatePendingMessagesCredit(addNewStamps) {
 }
 
 async function onFeedbackSent() {
-    console.log(' +++++++++++++++++++++ feedbacksent');
-    if ( !isSendError() && isGPT4() ) {
-        //console.log('GPT 4 feedbacksent');        
+    if ( !isSendError() ) {
+        lastSentMessage = '';
+        if(isGPT4() )
+        {
+            //console.log('GPT 4 feedbacksent');        
         await updateTimestamps(true);
+        }        
     }
 }
 
@@ -396,27 +399,21 @@ function isNewChatPage()
 }
 function startSendingFeedback() {
     if (!sendingFeedback) {
-        sendingFeedback = true;
+        sendingFeedback = true;        
 
         //If new chat session, start by send the configuration prompt
         if (isNewChatPage()) {
 
             sendFeedBack(firstPrompt);
         }
-        else{
-             //reset message reading variables
-            completeMessage = '';
-            previousMessage = '';
-            previousMessageTimestamp = 0;
-        }
-
+        startMonitoringReceivedMessages();
     }
 }
 
 function stopSendingFeedback() {
     if (sendingFeedback) {
         sendingFeedback = false;
-        previousMessage =''
+        stopMonitoringReceivedMessages();
     }
 }
 
@@ -559,6 +556,26 @@ window.addEventListener('message', (event) => {
     }
 });
 
+function stopMonitoringReceivedMessages()
+{
+    clearInterval( mostRecentMessagePollingIntervalId);
+
+}
+
+function startMonitoringReceivedMessages()
+{
+    lastSentMessage = '';
+    previousMessage = '';
+    previousMessageTimestamp = 0;
+
+    if (mostRecentMessagePollingIntervalId) {
+        clearInterval(mostRecentMessagePollingIntervalId);
+      }
+
+    mostRecentMessagePollingIntervalId = setInterval(checkForNewCommands, config.pollingFrequency);
+}
+
+
 async function init() {
     await loadConfig();
     await loadfirstPrompt();
@@ -567,11 +584,10 @@ async function init() {
     
 
     //Start Monitoring
-    mostRecentMessagePollingIntervalId = setInterval(checkForNewCommands, config.pollingFrequency);
-    connectToServer();
+        connectToServer();
     await loadTimestamps();
     await updateTimestamps(false);
-
+    //startMonitoringReceivedMessages();
     // Wait for the popup to be ready before emitting the event
         document.addEventListener('popupReady', function() {
             if( isGPT4() || timestamps.length >0) {
