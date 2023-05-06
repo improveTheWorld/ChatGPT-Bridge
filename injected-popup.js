@@ -2,12 +2,12 @@
 // # Software: ChatGPT-Bridge
 // # Purpose: Provide third-party software with the capability to utilize ChatGPT.
 // #
-// # Copyright 2023 Tec-Net
+// # Copyright © 2023 Tec-Net
 // #
 // # Dual License Notice
 // #
 // # For Free Software Projects:
-// # This software is licensed under the Apache License, Version 2.0 (the "License");
+// # This software is licensed under the Apache License, Version 2.0;
 // # you may not use this file except in compliance with the License.
 // # You may obtain a copy of the License at
 // #
