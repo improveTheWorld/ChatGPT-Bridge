@@ -1,4 +1,4 @@
-# ![ChatGPT-Bridge Logo](./Images/Logo/logo.png) **ChatGPT-Bridge**
+# ![ChatGPT-Bridge Logo](./assets/Logo/logo.png) **ChatGPT-Bridge**
 
 # Tired of waiting for access to the GPT-4 API? Frustrated by the fees charged for using the GPT-API? We have the perfect solution for you!
 
@@ -66,12 +66,12 @@ Follow the instructions in the [Getting Started](https://github.com/improveTheWo
 
 * If the displayed popup is as below:
 
-  ![Connecting.GIF](./Images/Usage/Connecting.GIF)
+  ![Connecting.GIF](./assets/Usage/Connecting.GIF)
 
   `You forgot to launch the Executor or your third-party server, if applicable. Please start the Executor and wait. The Bridge will continuously poll for a connection until it is established.`
 * When the connection is established, the displayed popup should be as below:
 
-  ![Start.GIF](./Images/Usage/Start.GIF)
+  ![Start.GIF](./assets/Usage/Start.GIF)
 
   Start a new chat and then click the start button to begin bridging between your ChatGPT AI and the third-party software (the Executor).
 
@@ -84,7 +84,7 @@ Follow the instructions in the [Getting Started](https://github.com/improveTheWo
   ---
 * When you are done and want to stop using the bridge, just click the stop button:
 
-  ![Stop.GIF](./Images/Usage/Stop.GIF)
+  ![Stop.GIF](./assets/Usage/Stop.GIF)
 
 3. The default WebSocket communication between the Bridge and the third-party software is done over port 8181. You can change the port in the config.json file if needed.
 4. You can find the initial prompt text in the file firstPrompt.txt. You may customize it for your personal needs if you want.

@@ -1,12 +1,12 @@
 {
   "manifest_version": 3,
-  "name": "ChatGPT Bridge",
-  "version": "1.0",
+  "name": "ChatGPT-Bridge",
+  "version": "xxxx",
   "permissions": ["activeTab", "storage", "tabs"],
   "action": {
     "default_popup": "popup.html",
     "default_icon": {
-      "48": "/Images/Logo/logo48.png"
+      "48": "/assets/Logo/logo48.png"
     }
   },
   "background": {
@@ -21,7 +21,7 @@
   ],
   "host_permissions": ["https://chat.openai.com/*"],
   "icons": {
-    "48": "/Images/Logo/logo48.png"
+    "48": "/assets/Logo/logo48.png"
   },
     "web_accessible_resources": [
     {
