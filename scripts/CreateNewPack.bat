@@ -2,14 +2,14 @@
 setlocal enabledelayedexpansion
 
 :: Read config.json file to get the version and source folder
-for /f "tokens=1,2" %%a in ('jq -r ".version,.name" package.json') do (
+for /f "tokens=1,2" %%a in ('jq -r ".version,.name" ../package.json') do (
   if not defined VERSION (
     set "VERSION=%%~a"
   ) else if not defined NAME (
     set "NAME=%%~a"
   )
 )
-set "SOURCE=./src"
+set "SOURCE=..\src"
 :: Check if the VERSION and SOURCE variables are set
 if not defined VERSION (
     echo Version not found in config.json
@@ -52,9 +52,11 @@ for /r "%TEMP_DIR%" %%f in (*.js) do (
 )
 
 :: Create zip file with version name
-set "ZIP_NAME=dist\%NAME%_%VERSION%.zip"
+set "ZIP_NAME=..\dist\%NAME%_%VERSION%.zip"
 echo Creating zip file...
-pushd "%TEMP_DIR%" && (7z a -tzip "%CD%\%ZIP_NAME%" "*") && popd || (echo 7z command failed)
+pushd "%TEMP_DIR%" && (7z a -tzip "%CD%\..\dist\%ZIP_NAME%" "*") && popd || (echo 7z command failed)
+echo Unzipping files to the current folder...
+7z x -o"%CD%" "%ZIP_NAME%"
 
 :: Display the location of the created zip file
 echo The zip file has been created at: %CD%\%ZIP_NAME%

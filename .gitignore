@@ -1,0 +1,7 @@
+﻿# .gitignore
+
+# Ignore everything in the dist folder
+/dist/*
+
+# But do not ignore the release notes file
+!/dist/RELEASE_NOTES.md
