@@ -108,9 +108,7 @@ function sendFeedBack(message) {
     }
     
 
-    sendButton.click();
-
-   
+    sendButton.click();   
     return ;
 }
 
@@ -404,7 +402,15 @@ function startSendingFeedback() {
         //If new chat session, start by send the configuration prompt
         if (isNewChatPage()) {
 
-            sendFeedBack(firstPrompt);
+            if(firstPrompt)
+            {
+                sendFeedBack(firstPrompt);
+            }
+            else
+            {
+                sendMessageToWebSocketServer("_START_NEW");
+            }
+            
         }
         startMonitoringReceivedMessages();
     }
@@ -558,6 +564,7 @@ window.addEventListener('message', (event) => {
 
 function stopMonitoringReceivedMessages()
 {
+    sendMessageToWebSocketServer("_STOP_");
     clearInterval( mostRecentMessagePollingIntervalId);
 
 }
@@ -580,11 +587,10 @@ async function init() {
     await loadConfig();
     await loadfirstPrompt();
     injectPopup();
-
-    
+ 
 
     //Start Monitoring
-        connectToServer();
+    connectToServer();
     await loadTimestamps();
     await updateTimestamps(false);
     //startMonitoringReceivedMessages();
