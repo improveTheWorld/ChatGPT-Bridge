@@ -52,11 +52,13 @@ for /r "%TEMP_DIR%" %%f in (*.js) do (
 )
 
 :: Create zip file with version name
-set "ZIP_NAME=..\dist\%NAME%_%VERSION%.zip"
+set "ZIP_NAME=%NAME%_%VERSION%.zip"
 echo Creating zip file...
 pushd "%TEMP_DIR%" && (7z a -tzip "%CD%\..\dist\%ZIP_NAME%" "*") && popd || (echo 7z command failed)
 echo Unzipping files to the current folder...
-7z x -o"%CD%" "%ZIP_NAME%"
+echo Distination "%CD%\..\dist"
+echo zip "%ZIP_NAME%"
+7z x -o"%CD%\..\dist" "..\dist\%ZIP_NAME%"
 
 :: Display the location of the created zip file
 echo The zip file has been created at: %CD%\%ZIP_NAME%
