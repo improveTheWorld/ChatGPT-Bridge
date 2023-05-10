@@ -1,4 +1,4 @@
-# Bridge V1.1.0
+# CHATGPT-Bridge V1.1.0
 
 * New features:
   * Added a countdown for messages credit (as the cap is limited by OpenAI to 25 messages per 3 hours for the ChatGPT plus acounts when using GPT-4).
