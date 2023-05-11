@@ -54,9 +54,10 @@ Follow the instructions in the [Getting Started](https://github.com/improveTheWo
 1. Clone the repository:
 
    git clone https://github.com/improveTheWorld/ChatGPT-Bridge.git
+   
 2. Open your browser and navigate to extensions ( `edge://extensions` or `chrome://extensions` depending on your browser).
 3. Enable "Developer Mode" in the top-right corner.
-4. Click on "Load Unpacked" and select the `chatgpt-bridge` folder.
+4. Click on "Load Unpacked" and select the `ChatGPT-Bridge/src` folder.
 5. The ChatGPT-Bridge plugin should now be visible in the extensions ist and ready for use!
 
 ## 🛠️ Usage
@@ -94,6 +95,14 @@ Follow the instructions in the [Getting Started](https://github.com/improveTheWo
    * Stream the message while it's being received from GPT (enable this by setting "streamingMode": true in the config.json file).
 6. If you want to use only the Bridge plugin with your third-party software, your software should act as a server and listen on the correct port for a connection. Once the plugin is installed and launched, it will automatically request a connection.
 
+**FROM VERSION 1.1.0 AND LATER**
+
+If you are using a ChatGPT Plus account, a countdown of available message credits will be displayed once you start using GPT-4 (as only 25 messages per 3 hours are allowed).  
+
+  ![Stop.GIF](./src/assets/Usage/CountDown.GIF)
+
+  The countdown will also display a timer counting down until the message credits are refilled
+
 <!-- Documentation
 -------------
 
@@ -113,13 +122,7 @@ Please read our [Contributing Guidelines](./CONTRIBUTING.md) for more details.
 
 ## ⚙️ Possible improvements
 
-**The first relase is already on the air, here are the next steps:**
-
-* Add a countdown for available messages (as the cap is limited by OpenAI to 25 messages per 3 hours for the ChatGPT plus acounts when using GPT-4).
-* Include a dismiss button for the Bridge popup.
-* Add an open button or a start link for the Bridge popup within the popup.html.
-* Issue to fix: Sometimes the input text element in the chat page has an enlarged size due to the amount of text entered. This makes it difficult to follow the most recent messages sent from GPT. Once the message is sent, it would be more comfortable to reset the input to its minimal size.
-* Introduce a settings menu to edit configurations from and to the config.json file.
+* See the [IMPROVEMENTS](./IMPROVEMENTS.md) file.
 
 ## 🔐 License
 

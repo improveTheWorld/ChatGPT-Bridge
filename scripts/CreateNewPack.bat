@@ -42,7 +42,7 @@ move /y "%UPDATED_MANIFEST%" "%MANIFEST%"
 
 :: Update version in popup.html
 set "POPUP_FILE=%TEMP_DIR%\popup.html"
-set "RELEASE_DATE=20%date:~6,2%-%date:~3,2%-%date:~0,2%"
+set "RELEASE_DATE=%date%"
 sed -i "s/<h2>Version .*<\/h2>/<h2>Version %VERSION% - Released %RELEASE_DATE%<\/h2>/" "%POPUP_FILE%"
 del sed*
 
