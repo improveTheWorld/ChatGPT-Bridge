@@ -58,7 +58,7 @@ Follow the instructions in the [Getting Started](https://github.com/improveTheWo
 2. Open your browser and navigate to extensions ( `edge://extensions` or `chrome://extensions` depending on your browser).
 3. Enable "Developer Mode" in the top-right corner.
 4. Click on "Load Unpacked" and select the `ChatGPT-Bridge/src` folder.
-5. The ChatGPT-Bridge plugin should now be visible in the extensions ist and ready for use!
+5. The ChatGPT-Bridge plugin should now be visible in the extensions list and ready for use!
 
 ## 🛠️ Usage
 
