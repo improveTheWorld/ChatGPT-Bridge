@@ -26,7 +26,6 @@
 let lastSentMessage = '';
 let previousMessage = '';
 let previousMessageTimestamp = 0;
-let sendingFeedback = false;
 let mostRecentMessagePollingIntervalId = null;
 let reconnectionPollIntervalId = null;
 let connectionStatusNotificationIntervalId = null;
@@ -34,7 +33,8 @@ let config = null;
 let connectionStatus = 'connecting';
 let ws = null
 let firstPrompt = null;
-
+const key = '1234567890123456';
+let Authentified = false;
 
 let textarea = document.querySelector('div.relative.flex > textarea');
 
@@ -87,10 +87,11 @@ function adjustTextAreaHeight() {
     textarea.style.height = height + 'px';
 }
 
-function sendFeedBack(message) {
 
-    textarea = document.querySelector('div.relative.flex > textarea');
-    sendButton = document.querySelector('div.relative.flex > textarea + button');
+function sendFeedBack(message) {
+    // Fetching the textarea and the sendButton with more specific selector
+    textarea = document.querySelector('#prompt-textarea');
+    sendButton = document.querySelector('#prompt-textarea').closest('div').querySelector('button');
     if (!textarea || !sendButton) {
         console.error('Unable to find textarea or send button.');
         return;
@@ -98,7 +99,10 @@ function sendFeedBack(message) {
 
     // Focus on the textarea
     textarea.focus();
-    textarea.value = message;
+    
+    // Simulating user typing into the field with triggering input event
+    setNativeValue(textarea, message);
+    textarea.dispatchEvent(new Event('input', { bubbles: true }));
 
     adjustTextAreaHeight();
 
@@ -107,10 +111,24 @@ function sendFeedBack(message) {
         sendButton.removeAttribute('disabled');
     }
     
-
-    sendButton.click();   
+    sendButton.click();
     return ;
 }
+
+function setNativeValue(element, value) {
+    let lastValue = element.value;
+    element.value = value;
+    let event = new Event("input", { target: element, bubbles: true });
+    // React 15
+    event.simulated = true;
+    // React 16-17
+    let tracker = element._valueTracker;
+    if (tracker) {
+        tracker.setValue(lastValue);
+    }
+    element.dispatchEvent(event);
+}
+
 
 function isSendError()
 {
@@ -119,6 +137,19 @@ function isSendError()
 
 function notifyConnectionStatus() {
     emitEvent(connectionStatus);
+}
+
+
+function encryptStringAES(message, key) {
+    const iv = CryptoJS.lib.WordArray.random(128/8); // generate a random initialization vector
+    const encrypted = CryptoJS.AES.encrypt(message, CryptoJS.enc.Utf8.parse(key), { 
+        iv: iv, 
+        mode: CryptoJS.mode.CBC 
+    });
+
+    // Concatenate the random IV and the cipher text, then convert to a base64 string
+    const encryptedMessage = CryptoJS.enc.Base64.stringify(iv.concat(encrypted.ciphertext));
+    return encryptedMessage;
 }
 
 function connectWebSocket() {
@@ -132,7 +163,15 @@ function connectWebSocket() {
 
         ws.addEventListener('message', (event) => {
             const output = event.data;
-            sendFeedBack(output);
+            if(!Authentified)
+            {
+                ws.send( encryptStringAES(CryptoJS.SHA256(output).toString(),key));
+                Authentified = true;
+            }
+            else
+            {
+                sendFeedBack(output);
+            }
         });
 
         ws.addEventListener('open', (event) => {
@@ -151,6 +190,7 @@ function connectWebSocket() {
         });
 
         ws.addEventListener('close', (event) => {
+            Authentified = false;
             if (connectionStatus != 'disconnected') {
                 connectionStatus = 'connecting';
                 setTimeout(() => {
@@ -216,6 +256,10 @@ async function loadTimestamps() {
     } catch (error) {
         console.error('Error loading timestamps:', error);
     }
+
+    if (chrome.runtime.lastError) {
+        reject(chrome.runtime.lastError);
+    }
 }
 
 function getStoredTimestamps() {
@@ -252,9 +296,15 @@ async function loadfirstPrompt() {
         const response = await fetch(chrome.runtime.getURL('firstPrompt.txt'));
         firstPrompt = await response.text();
     } catch (error) {
-        console.error('Error loading firstPrompt:', error);
+        //console.error('Error loading firstPrompt:', error);
+        if (chrome.runtime.lastError) {
+            console.error('Error retrieving config:', chrome.runtime.lastError);
+            reject(chrome.runtime.lastError);
+        } 
 
     }
+
+    
 }
 
 function emitEvent(name, detail = null) {
@@ -266,6 +316,8 @@ function emitEvent(name, detail = null) {
 function injectPopup() {
 
     const popupHtml = `
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/crypto-js.min.js"></script>
+
     <div id="popup-container" style="position: fixed; top: 0px; right: 10px; z-index: 9999; background-color: #f5f5f5; padding: 10px; border-radius: 5px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);  width: 140px;">
         <div style="display: flex; align-items: stretch; justify-content: space-between;">
             <div style="display: flex; flex-direction: column; justify-content: center; border: 1px solid #ccc; border-radius: 5px; padding: 5px; background-color: #e0e0e0;">
@@ -396,31 +448,28 @@ function isNewChatPage()
     return isNew;
 }
 function startSendingFeedback() {
-    if (!sendingFeedback) {
-        sendingFeedback = true;        
+       
 
-        //If new chat session, start by send the configuration prompt
-        if (isNewChatPage()) {
+    //If new chat session, start by send the configuration prompt
+    if (isNewChatPage()) {
 
-            if(firstPrompt)
-            {
-                sendFeedBack(firstPrompt);
-            }
-            else
-            {
-                sendMessageToWebSocketServer("_START_NEW");
-            }
-            
+        if(firstPrompt)
+        {
+            sendFeedBack(firstPrompt);
         }
-        startMonitoringReceivedMessages();
+        else
+        {
+            sendMessageToWebSocketServer("_START_NEW");
+        }
+        
     }
+    startMonitoringReceivedMessages();
 }
 
 function stopSendingFeedback() {
-    if (sendingFeedback) {
-        sendingFeedback = false;
-        stopMonitoringReceivedMessages();
-    }
+   
+    stopMonitoringReceivedMessages();
+
 }
 
 /////////////////////////  Server connection Management   ///////////////////////////
@@ -449,12 +498,19 @@ function updateGPT_PlusAccountStatus()
     }
 }
 
+  
+
+
 function isGPT4()
 {
     //when the chat page is just loaded
     let titleElement = document.querySelector('.truncate > span.flex.h-6.items-center.gap-1.truncate');
     if(!titleElement){
         titleElement = document.querySelector('.flex.w-full.items-center.justify-center.gap-1.border-b');
+    }
+    if(!titleElement)
+    {
+        titleElement = document.querySelector('div[class*="dark\\:text-gray-300"]');
     }
     if(!titleElement)
     {
