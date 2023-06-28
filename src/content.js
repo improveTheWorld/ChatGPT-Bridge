@@ -168,7 +168,7 @@ function connectWebSocket() {
     if (connectionStatus != 'disconnected') {
         // Check if the WebSocket is already connected before creating a new connection
         if (ws &&(ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING) ){
-            console.log("connectWebSocket : already connected !");
+            console.log("connectWebSocket : already connected or connecting !");
             return;
         }
 
@@ -187,6 +187,7 @@ function connectWebSocket() {
                     console.log("New Key receiced : "+ tempKey);
                     key = tempKey;
                     save('funKey', key);
+
                 }
                 else if(key!= null)
                 {
@@ -196,7 +197,7 @@ function connectWebSocket() {
                 }
                 else
                 {
-                    console.error("not authetified, authenticationNeeded, but key value is "+key);
+                    console.error("not authentified, authentication needed, but key value is "+key);
                 }
 
                 if(key!= null)
@@ -244,34 +245,55 @@ function connectWebSocket() {
 }
 
 async function loadConfig() {
-    try {
+    try 
+    {
         const storedConfig = await getStored('config');
-
-        if (storedConfig) {
+        if (storedConfig) 
+        {
             config = storedConfig;
-        } else {
+        } else 
+        {
             const response = await fetch(chrome.runtime.getURL('config.json'));
             config = await response.json();
             await save('config',config); // Save the default config to local storage
         }
-    } catch (error) {
+    }
+    catch (error) 
+    {
         console.error('Error loading config:', error);
     }
 }
 
 
-async function load(itemName, variable, defaultValue) {
-    try {
+async function load(itemName, variable, defaultValue) 
+{
+    try 
+    {
         const temp = await getStored(itemName);
+        console.log("getStored("+itemName+") returned :", temp);
+        if (temp) 
+        {
+            return temp;
+        } 
+        else
+        { 
+            if (defaultValue) 
+            {
+                await save(itemName,defaultValue); // Save the default config to local storage
+            }
 
-        if (temp) {
-            variable = temp;
-        } else if (defaultValue) {
-            variable = defaultValue;
-            await save(itemName,variable); // Save the default config to local storage
+            return defaultValue;
         }
-    } catch (error) {
+    } 
+    catch (error) 
+    {
         console.error('Error loading config:', error);
+        if (defaultValue) 
+        {
+            await save(itemName,defaultValue); // Save the default config to local storage
+        }
+        
+        return defaultValue;
     }
 }
 
@@ -283,7 +305,8 @@ function getStored(itemName) {
                 console.error('Error retrieving '+ itemName + ' :', chrome.runtime.lastError);
                 reject(chrome.runtime.lastError);
             } else {
-                resolve(result.config);
+                console.log( itemName + " loaded: "+ result[itemName]);
+                resolve(result[itemName]);
             }
         });
     });
@@ -291,12 +314,12 @@ function getStored(itemName) {
 
 function save(itemName, item ) {
     return new Promise((resolve, reject) => {
-        chrome.storage.local.set({ itemName : item }, () => {
+        chrome.storage.local.set({ [itemName] : item }, () => {
             if (chrome.runtime.lastError) {
                 console.error('Error saving ' + itemName +' :', chrome.runtime.lastError);
                 reject(chrome.runtime.lastError);
             } else {
-                console.log(itemName + ' saved successfully.');
+                console.log(itemName + ' saved successfully as' + item);
                 resolve();
             }
         });
@@ -678,8 +701,8 @@ function startMonitoringReceivedMessages()
 async function init() {
     await loadConfig();
     await loadfirstPrompt();
-    await load('funKey', key, null)
-    console.log("loaded key : "+key);
+    key = await load('funKey', key, null)
+    console.log("loaded key : " + key);
     injectPopup();
  
 
