@@ -33,8 +33,8 @@ let config = null;
 let connectionStatus = 'connecting';
 let ws = null
 let firstPrompt = null;
-const key = '1234567890123456';
-let Authentified = false;
+let key = null ;
+let isAuthenticated = false;
 
 let textarea = document.querySelector('div.relative.flex > textarea');
 
@@ -88,7 +88,7 @@ function adjustTextAreaHeight() {
 }
 
 
-function sendFeedBack(message) {
+function AnswerChatGPT(message) {
     // Fetching the textarea and the sendButton with more specific selector
     textarea = document.querySelector('#prompt-textarea');
     sendButton = document.querySelector('#prompt-textarea').closest('div').querySelector('button');
@@ -142,7 +142,7 @@ function notifyConnectionStatus() {
 
 function encryptStringAES(message, key) {
     const iv = CryptoJS.lib.WordArray.random(128/8); // generate a random initialization vector
-    const encrypted = CryptoJS.AES.encrypt(message, CryptoJS.enc.Utf8.parse(key), { 
+    const encrypted = CryptoJS.AES.encrypt(message, CryptoJS.enc.Base64.parse(key), { 
         iv: iv, 
         mode: CryptoJS.mode.CBC 
     });
@@ -152,30 +152,72 @@ function encryptStringAES(message, key) {
     return encryptedMessage;
 }
 
+function extractKey(str) {
+    const regex = /^KEY:(.*)$/;
+    const match = str.match(regex);
+    
+    if (match && match.length === 2) {
+      return match[1];
+    }
+    
+    return null;
+  }
+
+  
 function connectWebSocket() {
     if (connectionStatus != 'disconnected') {
         // Check if the WebSocket is already connected before creating a new connection
         if (ws &&(ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING) ){
+            console.log("connectWebSocket : already connected !");
             return;
         }
 
         ws = new WebSocket(`ws://127.0.0.1:${config.communicationPort}`);
 
         ws.addEventListener('message', (event) => {
+
             const output = event.data;
-            if(!Authentified)
+            console.log("New message received :", output);
+            if(config.authenticationNeeded && !isAuthenticated)
             {
-                ws.send( encryptStringAES(CryptoJS.SHA256(output).toString(),key));
-                Authentified = true;
+                tempKey = extractKey(output);
+
+                if(tempKey != null)
+                {
+                    console.log("New Key receiced : "+ tempKey);
+                    key = tempKey;
+                    save('funKey', key);
+                }
+                else if(key!= null)
+                {
+                    console.log("Authentication question received. Sending Answer");
+                    ws.send( encryptStringAES(CryptoJS.SHA256(output).toString(),key));
+                   
+                }
+                else
+                {
+                    console.error("not authetified, authenticationNeeded, but key value is "+key);
+                }
+
+                if(key!= null)
+                {
+                    isAuthenticated = true;
+
+                    if (connectionStatus != 'disconnected') {
+                        connectionStatus = 'connected';
+                    }   
+                }
+                
             }
             else
             {
-                sendFeedBack(output);
+                AnswerChatGPT(output);
             }
         });
 
         ws.addEventListener('open', (event) => {
-            if (connectionStatus != 'disconnected') {
+            if( !config.authenticationNeeded && (connectionStatus != 'disconnected') )
+            {
                 connectionStatus = 'connected';
             }
         });
@@ -190,7 +232,7 @@ function connectWebSocket() {
         });
 
         ws.addEventListener('close', (event) => {
-            Authentified = false;
+            isAuthenticated = false;
             if (connectionStatus != 'disconnected') {
                 connectionStatus = 'connecting';
                 setTimeout(() => {
@@ -203,25 +245,42 @@ function connectWebSocket() {
 
 async function loadConfig() {
     try {
-        const storedConfig = await getStoredConfig();
+        const storedConfig = await getStored('config');
 
         if (storedConfig) {
             config = storedConfig;
         } else {
             const response = await fetch(chrome.runtime.getURL('config.json'));
             config = await response.json();
-            await saveConfig(config); // Save the default config to local storage
+            await save('config',config); // Save the default config to local storage
         }
     } catch (error) {
         console.error('Error loading config:', error);
     }
 }
 
-function getStoredConfig() {
+
+async function load(itemName, variable, defaultValue) {
+    try {
+        const temp = await getStored(itemName);
+
+        if (temp) {
+            variable = temp;
+        } else if (defaultValue) {
+            variable = defaultValue;
+            await save(itemName,variable); // Save the default config to local storage
+        }
+    } catch (error) {
+        console.error('Error loading config:', error);
+    }
+}
+
+
+function getStored(itemName) {
     return new Promise((resolve, reject) => {
-        chrome.storage.local.get('config', (result) => {
+        chrome.storage.local.get(itemName, (result) => {
             if (chrome.runtime.lastError) {
-                console.error('Error retrieving config:', chrome.runtime.lastError);
+                console.error('Error retrieving '+ itemName + ' :', chrome.runtime.lastError);
                 reject(chrome.runtime.lastError);
             } else {
                 resolve(result.config);
@@ -230,14 +289,14 @@ function getStoredConfig() {
     });
 }
 
-function saveConfig(config) {
+function save(itemName, item ) {
     return new Promise((resolve, reject) => {
-        chrome.storage.local.set({ config }, () => {
+        chrome.storage.local.set({ itemName : item }, () => {
             if (chrome.runtime.lastError) {
-                console.error('Error saving config:', chrome.runtime.lastError);
+                console.error('Error saving ' + itemName +' :', chrome.runtime.lastError);
                 reject(chrome.runtime.lastError);
             } else {
-                console.log('Config saved successfully.');
+                console.log(itemName + ' saved successfully.');
                 resolve();
             }
         });
@@ -246,11 +305,11 @@ function saveConfig(config) {
 
 async function loadTimestamps() {
     try {
-        const storedTimestamps = await getStoredTimestamps();
+        const temp = await getStored('timestamps')
 
-        if (storedTimestamps) {
+        if (temp) {
  
-            timestamps = storedTimestamps;
+            timestamps = temp;
 
         }
     } catch (error) {
@@ -262,31 +321,8 @@ async function loadTimestamps() {
     }
 }
 
-function getStoredTimestamps() {
-    return new Promise((resolve, reject) => {
-        chrome.storage.local.get('timestamps', (result) => {
-            if (chrome.runtime.lastError) {
-                console.error('Error retrieving config:', chrome.runtime.lastError);
-                reject(chrome.runtime.lastError);
-            } else {
-                resolve(result.timestamps);
-            }
-        });
-    });
-}
-
 function saveTimestamps(timestamps) {
-    return new Promise((resolve, reject) => {
-        chrome.storage.local.set({ timestamps }, () => {
-            if (chrome.runtime.lastError) {
-                console.error('Error saving config:', chrome.runtime.lastError);
-                reject(chrome.runtime.lastError);
-            } else {
-                console.log('timestamps saved successfully.');
-                resolve();
-            }
-        });
-    });
+    return save('timestamps', timestamps);
 }
 
 
@@ -361,7 +397,7 @@ async function updateTimestamps(addNewStamps) {
 
     if ( await updatePendingMessagesCredit(addNewStamps))
     {
-        saveTimestamps(timestamps);
+        save('timestamps',timestamps);
 
         timeCountDown = -1;
 
@@ -455,7 +491,7 @@ function startSendingFeedback() {
 
         if(firstPrompt)
         {
-            sendFeedBack(firstPrompt);
+            AnswerChatGPT(firstPrompt);
         }
         else
         {
@@ -642,6 +678,8 @@ function startMonitoringReceivedMessages()
 async function init() {
     await loadConfig();
     await loadfirstPrompt();
+    await load('funKey', key, null)
+    console.log("loaded key : "+key);
     injectPopup();
  
 
