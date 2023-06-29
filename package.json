@@ -1,6 +1,6 @@
 {
     "name": "ChatGPT-Bridge",
-    "version": "1.1.0",
+    "version": "1.2.0",
     "description": "A web browser plugin that offers API-like access to ChatGPT, working alongside ChatGPT-Executor.",
     "main": "index.js",
     "scripts": {},
