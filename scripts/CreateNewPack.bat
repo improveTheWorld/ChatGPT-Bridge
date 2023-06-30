@@ -43,7 +43,9 @@ move /y "%UPDATED_MANIFEST%" "%MANIFEST%"
 :: Update version in popup.html
 set "POPUP_FILE=%TEMP_DIR%\popup.html"
 set "RELEASE_DATE=%date%"
-sed -i "s/<h2>Version .*<\/h2>/<h2>Version %VERSION% - Released %RELEASE_DATE%<\/h2>/" "%POPUP_FILE%"
+echo %RELEASE_DATE%
+echo %version% 
+sed -i"" "s|<h2>Version .* - Released .*</h2>|<h2>Version %version%  - Released %RELEASE_DATE%</h2>|" "%POPUP_FILE%"
 del sed*
 
 :: Apply uglify on all .js files in the temporary folder
