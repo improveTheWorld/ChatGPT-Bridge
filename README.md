@@ -9,15 +9,16 @@ Introducing **[ChatGPT-Driver](https://youtu.be/9fCtMJQxQ4c)**, a system compris
 Bridge provides free API-like access to GPT-3.5. It also provides free API-like access to GPT-4 if you have a ChatGPT Plus account.
 **✨ 🎉🌟 No fees are charged for the use of the API-like access!**
 
+We are continuously striving to maintain and improve this project. If you love our work and find it useful, consider supporting us. Every small donation will go a long way in helping us to keep this project alive and free. **💌[Donate Here](https://www.paypal.com/donate/?hosted_button_id=SJTG7U2E6PC4W)💌**
+
 To fully benefit from ChatGPT-Driver, install and set up both components.
 
-## What's New in Version 1.0.0
+## 🆕 Most recent Release Notes (Version 1.2.0)
 
-- Upgraded from an experimental version to a stable release (v1.0.0)
-- Improved performance and compatibility with Executor
-- Streamlined setup and usage with clearer instructions
-- Release of [Executor repository](https://github.com/improveTheWorld/ChatGPT-Executor.git) and source code.
-- Improved graphical design and much more.
+- Add authentification token mechanism to use ChatGPT-Executor-1.2.0
+- Support the newest ChatGPT page's html  ( ChatGPT May 24 Version)
+- Add a donate link into pupup.html. If interressted you may do it directly from **[Here](https://www.paypal.com/donate/?hosted_button_id=SJTG7U2E6PC4W)**
+
 
 **Note:** While ChatGPT-Driver has been significantly improved and tested, there may still be potential bugs and limitations. We appreciate your understanding and welcome any feedback to help us enhance the system.
 
@@ -39,8 +40,18 @@ Follow the instructions in the [Getting Started](https://github.com/improveTheWo
 
 ### ChatGPT-Executor
 
-1. Visit the [Executor GitHub Repository](https://github.com/improveTheWorld/ChatGPT-Executor) and follow the installation instructions.
-2. Set up the Executor server application according to the provided documentation.
+You can download and install ChatGPT-Executor-1.2.0 directly from [Here](https://bit.ly/46rz4zE). For more information you may visit the [Executor GitHub Repository](https://github.com/improveTheWorld/ChatGPT-Executor) and follow the instructions.
+You also can download the correct version of ChatGPT-Executor which is compatible of your ChatGPT-Bridge version , from the ChatGPT-Bridge popup.
+1. click on Entensions button ( on the top left corner of your web navigator) :
+
+![popup_1.png](./src/assets/Usage/popup_1.png)
+
+2. From displayed the entension list , select the chatGPT-Bridge, the popup will be displayed
+
+![popup._2.png](./src/assets/Usage/popup_2.png)
+
+
+here is how to display the ChatGPT-Bridge  popup :
 
 ## 🚀 Getting Started
 
