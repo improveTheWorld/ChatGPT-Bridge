@@ -100,10 +100,10 @@
       }
   });
 
-  // Load font-awesome icons
+//   // Load font-awesome icons
   const link = document.createElement('link');
   link.rel = 'stylesheet';
-  link.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.0/css/all.min.css';
+  link.href = chrome.runtime.getURL('./assets/css/all.min.css');
   document.head.appendChild(link);
 })();
 

@@ -5,5 +5,5 @@
   "communicationPort": 8181,
   "reconnectInterval": 1000,
   "feedbackDelay": 200,
-  "authenticationNeeded" : true
+  "authenticationNeeded" : false
 }

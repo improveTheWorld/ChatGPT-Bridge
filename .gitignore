@@ -5,3 +5,6 @@
 
 # But do not ignore the release notes file
 !/dist/RELEASE_NOTES.md
+.DS_Store
+dist.crx
+dist.pem

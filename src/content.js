@@ -36,12 +36,12 @@ let firstPrompt = null;
 let key = null ;
 let isAuthenticated = false;
 
-let textarea = document.querySelector('div.relative.flex > textarea');
+let textarea = document.querySelector('#prompt-textarea')
 
 let sendButton = null; 
 
 function getMostRecentMessage() {
-    const messageElement = document.querySelector('div.group:nth-last-child(2) div.markdown.prose');
+    const messageElement = document.querySelector('article:last-of-type .markdown.prose');
 
     if (!messageElement) return;
 
@@ -54,7 +54,7 @@ function checkForNewCommands() {
 
 
     const currentMessage = getMostRecentMessage();
-
+    console.log("new commands :" + currentMessage );
     // Continue reading the most recent received message until it doesn't change during the defined time
     if (currentMessage && (currentMessage !== previousMessage)) {
 
@@ -72,7 +72,7 @@ function checkForNewCommands() {
         // if (currentMessage == previousMessage) && waiting period reached
     } else if (Date.now() - previousMessageTimestamp >= config.messageCompletionTime && !config.streamingMode) {
 
-        if (currentMessage !== lastSentMessage) {
+        if (currentMessage && (currentMessage !== lastSentMessage)) {
             lastSentMessage = currentMessage;
             //console.log('Most recent received message:', completeMessage);
             sendMessageToWebSocketServer(lastSentMessage);
@@ -82,42 +82,47 @@ function checkForNewCommands() {
 
 function adjustTextAreaHeight() {
     // Adjust the textarea height based on the content length
-    const rows = Math.ceil((textarea.value.length) / 88);
+    const rows = Math.ceil((textarea.innerText.length) / 88);
     const height = rows * 24;
-    textarea.style.height = height + 'px';
+    textarea.height = height + 'px';
 }
 
-
-function AnswerChatGPT(message) {
+function AnswerChatGPT(text) 
+{
     // Fetching the textarea and the sendButton with more specific selector
-    textarea = document.querySelector('#prompt-textarea');
-    sendButton = document.querySelector('#prompt-textarea').closest('div').querySelector('button');
-    if (!textarea || !sendButton) {
-        console.error('Unable to find textarea or send button.');
-        return;
-    }
+	textarea = document.querySelector('#prompt-textarea');
 
-    // Focus on the textarea
-    textarea.focus();
-    
-    // Simulating user typing into the field with triggering input event
-    setNativeValue(textarea, message);
-    textarea.dispatchEvent(new Event('input', { bubbles: true }));
+	// Focus on the textarea and simulate typing
+	textarea.focus();
+    setNativeValue(textarea,text);
+	adjustTextAreaHeight();
 
-    adjustTextAreaHeight();
+    // click the send button when enabled
+    clickSendButtonWhenEnabled();
 
-    // Enable the send button if it's disabled
-    if (sendButton.hasAttribute('disabled')) {
-        sendButton.removeAttribute('disabled');
-    }
-    
-    sendButton.click();
     return ;
 }
 
-function setNativeValue(element, value) {
-    let lastValue = element.value;
-    element.value = value;
+function clickSendButtonWhenEnabled()
+{
+    sendButton = document.querySelector('[data-testid="send-button"]');
+    if(sendButton && !sendButton.disabled)
+    {
+        sendButton.click();
+    }
+    else
+    {
+        setTimeout(() => {
+        
+            clickSendButtonWhenEnabled();
+        },50);
+    }
+    
+}
+
+function setNativeValue(element, text) {
+    let lastValue = element.innerText;
+    element.innerText = text;
     let event = new Event("input", { target: element, bubbles: true });
     // React 15
     event.simulated = true;
@@ -177,7 +182,7 @@ function connectWebSocket() {
         ws.addEventListener('message', (event) => {
 
             const output = event.data;
-            console.log("New message received :", output);
+            
             if(config.authenticationNeeded && !isAuthenticated)
             {
                 tempKey = extractKey(output);
@@ -212,6 +217,7 @@ function connectWebSocket() {
             }
             else
             {
+                console.log("New message received :", output);
                 AnswerChatGPT(output);
             }
         });
@@ -371,8 +377,17 @@ function emitEvent(name, detail = null) {
     window.dispatchEvent(event);
 }
 
+function loadFontAwesomeCSS() {
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.type = 'text/css';
+    link.href = chrome.runtime.getURL('./assets/css/all.min.css');
+    document.head.appendChild(link);
+}
 
 function injectPopup() {
+    // Load Font Awesome CSS before injecting popup
+    loadFontAwesomeCSS();
 
     const popupHtml = `
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/crypto-js.min.js"></script>
@@ -404,7 +419,6 @@ function injectPopup() {
     const script = document.createElement('script');
     script.src = chrome.runtime.getURL('injected-popup.js');
     (document.head || document.documentElement).appendChild(script);
-
 }
 
 
@@ -723,4 +737,3 @@ async function init() {
 }
 
 init();
-
